@@ -221,6 +221,7 @@ namespace SDK
         {
             public const uint ExfiltrationPointArray = 0x28; // EFT.Interactive.ExfiltrationPoint[]
             public const uint ScavExfiltrationPointArray = 0x30; // EFT.Interactive.ScavExfiltrationPoint[]
+            public const uint SecretExfiltrationPointArray = 0x38; // EFT.Interactive.SecretExfiltrations.SecretExfiltrationPoint[]
         }
 
         public readonly partial struct Exfil
@@ -237,7 +238,17 @@ namespace SDK
 
         public readonly partial struct ExfilSettings
         {
+            public const uint Id = 0x10; // String
             public const uint Name = 0x18; // String
+            public const uint EntryPoints = 0x20; // String
+            public const uint ExfiltrationType = 0x28; // System.Int32
+            public const uint ExfiltrationTime = 0x2C; // Single
+            public const uint PlayersCount = 0x30; // Int32
+            public const uint Chance = 0x34; // Single
+            public const uint MinTime = 0x38; // Single
+            public const uint MaxTime = 0x3C; // Single
+            public const uint StartTime = 0x40; // Int32
+            public const uint EventAvailable = 0x44; // Boolean
         }
 
         public readonly partial struct GenericCollectionContainer
