@@ -4,28 +4,28 @@ namespace SDK
 	{
 		public readonly partial struct NoMalfunctions
 		{
-			public const uint ClassName_ClassToken = 0x2001B84; // MDToken
-			public const uint GetMalfunctionState_MethodToken = 0x600AA61; // MDToken
+			public const uint ClassName_ClassToken = 0x2001B88; // MDToken
+			public const uint GetMalfunctionState_MethodToken = 0x600AA76; // MDToken
 			public const string ClassName = @"EFT.Player+FirearmController";
 			public const string GetMalfunctionState = @"GetMalfunctionState";
 		}
 
 		public readonly partial struct FirearmController
 		{
-			public const uint ClassName_ClassToken = 0x2001B84; // MDToken
+			public const uint ClassName_ClassToken = 0x2001B88; // MDToken
 			public const string ClassName = @"EFT.Player+FirearmController";
 		}
 
 		public readonly partial struct OpticCameraManagerContainer
 		{
-			public const uint ClassName_ClassToken = 0x20034EB; // MDToken
-			public const string ClassName = @"\uF208";
+			public const uint ClassName_ClassToken = 0x20034F4; // MDToken
+			public const string ClassName = @"\uF209";
 		}
 
 		public readonly partial struct ProceduralWeaponAnimation
 		{
-			public const uint ClassName_ClassToken = 0x20028C6; // MDToken
-			public const uint MethodName_MethodToken = 0x600F8EC; // MDToken
+			public const uint ClassName_ClassToken = 0x20028CA; // MDToken
+			public const uint MethodName_MethodToken = 0x600F901; // MDToken
 			public const string ClassName = @"EFT.Animations.ProceduralWeaponAnimation";
 			public const string MethodName = @"get_ShotNeedsFovAdjustments";
 		}
