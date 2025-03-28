@@ -1192,6 +1192,24 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
                         Name = "Zombie Tagilla",
                         Type = PlayerType.AIBoss
                     };
+                case Enums.WildSpawnType.bossTagillaAgro:
+                    return new AIRole()
+                    {
+                        Name = "bossTagillaAgro",
+                        Type = PlayerType.AIBoss
+                    };
+                case Enums.WildSpawnType.bossKillaAgro:
+                    return new AIRole()
+                    {
+                        Name = "bossKillaAgro",
+                        Type = PlayerType.AIBoss
+                    };
+                case Enums.WildSpawnType.tagillaHelperAgro:
+                    return new AIRole()
+                    {
+                        Name = "tagillaHelperAgro",
+                        Type = PlayerType.AIBoss
+                    };
                 default:
                     LoneLogging.WriteLine("WARNING: Unknown WildSpawnType: " + (int)wildSpawnType);
                     return new AIRole()
