@@ -26,6 +26,7 @@ namespace eft_dma_shared.Common.Misc.Data
             ["tarkovstreets"] = "Streets",
             ["Sandbox"] = "Ground Zero",
             ["Sandbox_high"] = "Ground Zero",
+            ["Labyrinth"] = "The Labyrinth",
             ["Arena_RailwayStation"] = "Skybridge",
             ["Arena_AirPit"] = "Air pit",
             ["Arena_equator_TDM_02"] = "Equator",

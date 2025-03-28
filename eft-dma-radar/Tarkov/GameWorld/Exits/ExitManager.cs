@@ -37,6 +37,14 @@ namespace eft_dma_radar.Tarkov.GameWorld.Exits
                 var exfil = new Exfil(exfilAddr, _isPMC);
                 list.Add(exfil);
             }
+            /// Secret Extracts
+            var secretExfil = Memory.ReadPtr(exfilController + Offsets.ExfilController.SecretExfiltrationPointArray);
+            using var secrets = MemArray<ulong>.Get(secretExfil, false);
+            foreach (var secretAddr in secrets)
+            {
+                var exfil = new Exfil(secretAddr, true);
+                list.Add(exfil);
+            }
             /// Transits
             var transitController = Memory.ReadPtr(_localGameWorld + Offsets.ClientLocalGameWorld.TransitController, false);
             var transitsPtr = Memory.ReadPtr(transitController + Offsets.TransitController.TransitPoints, false);
