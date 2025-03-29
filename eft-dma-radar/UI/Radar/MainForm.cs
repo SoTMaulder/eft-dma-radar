@@ -3615,7 +3615,7 @@ namespace eft_dma_radar.UI.Radar
                 var externalIP = await WebRadarServer.GetExternalIPAsync();
                 await WebRadarServer.StartAsync(bindIP, port, tickRate, checkBox_WebRadarUPNP.Checked);
                 button_WebRadarStart.Text = "Running...";
-                linkLabel_WebRadarLink.Text = $"http://fd-mambo.org:8080/?host={externalIP}&port={port}&password={textBox_WebRadarPassword.Text}";
+                linkLabel_WebRadarLink.Text = $"http://tarkovradar.mauldercraft.org/?host={externalIP}&port={port}&password={textBox_WebRadarPassword.Text}";
             }
             catch (Exception ex)
             {
