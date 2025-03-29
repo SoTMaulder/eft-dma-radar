@@ -88,6 +88,11 @@ namespace eft_dma_shared.Common.Misc.Data
                 ["Adm Basement"] = "Admin Basement",
                 ["Smuggler's Path (Co-op)"] = "Smuggler's Path (Co-op)",
             }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase) },
+            { "Labyrinth", new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["labir_exit"] = "The Way Up",
+                ["labyrinth_secret_tagilla_key"] = " Aridane's Path",
+            }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase) },
             { "rezervbase", new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 // PMC

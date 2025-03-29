@@ -17,6 +17,12 @@ namespace eft_dma_radar.Tarkov.EFTPlayer.Plugins
         public string Nickname => this.Profile?.Info?.Nickname;
 
         /// <summary>
+        /// Player's Prestige (via Profile Data).
+        /// </summary>
+        public int Prestige => this.Profile.Info.Prestige;
+
+
+        /// <summary>
         /// Player's current profile (if Profile Lookups are enabled).
         /// Returns NULL if profile cannot be retrieved.
         /// </summary>

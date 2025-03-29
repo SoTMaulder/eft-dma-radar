@@ -46,7 +46,7 @@ namespace eft_dma_radar
 {
     internal static class Program
     {
-        internal const string Name = "EFT DMA Radar";
+        internal const string Name = "Plugware v0.69";
 
 
         /// <summary>
