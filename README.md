@@ -1,4 +1,4 @@
-# LoneEFT by Mambo
+# LoneEFT by Mambo/SoTMaulder
 
 In this project I will be slowly adding features, updates and anything else I want to personally use. 
 
