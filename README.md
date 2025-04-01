@@ -9,4 +9,5 @@ In this project I will be slowly adding features, updates and anything else I wa
 
  **- Donations to SoTMaulder**
  * Paypal: jacobstratton@live.com
+ * Bitcoin: 35Nw2nMngHvUbEJnGYJhLYBTjKVkb4W314
    All Donations are appriciated and keep me motived in keeping this source alive, active and with new features. Thank you!
