@@ -141,6 +141,7 @@
             label_Pos = new Label();
             skglControl_Radar = new SKGLControl();
             tabControl1 = new TabControl();
+            checkBox_RadarBomb = new CheckBox();
             linkLabel_CheckForUpdates = new LinkLabel();
             tabPage2.SuspendLayout();
             flowLayoutPanel_Settings.SuspendLayout();
@@ -221,6 +222,7 @@
             flowLayoutPanel_RadarSettings.Controls.Add(checkBox_Aimview);
             flowLayoutPanel_RadarSettings.Controls.Add(checkBox_GrpConnect);
             flowLayoutPanel_RadarSettings.Controls.Add(checkBox_HideNames);
+            flowLayoutPanel_RadarSettings.Controls.Add(checkBox_RadarBomb);
             flowLayoutPanel_RadarSettings.Dock = DockStyle.Top;
             flowLayoutPanel_Settings.SetFlowBreak(flowLayoutPanel_RadarSettings, true);
             flowLayoutPanel_RadarSettings.Location = new Point(3, 3);
@@ -1478,6 +1480,19 @@
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(1264, 681);
             tabControl1.TabIndex = 8;
+
+
+            checkBox_RadarBomb.AutoSize = true;
+            checkBox_RadarBomb.Location = new Point(469, 122);
+            checkBox_RadarBomb.Name = "checkBox_RadarBomb";
+            checkBox_RadarBomb.Size = new Size(128, 19);
+            checkBox_RadarBomb.TabIndex = 47;
+            checkBox_RadarBomb.Text = "Show Bomb Carrier";
+            checkBox_RadarBomb.UseVisualStyleBackColor = true;
+            checkBox_RadarBomb.CheckedChanged += checkBox_RadarBomb_CheckedChanged;
+
+
+
             // 
             // linkLabel_CheckForUpdates
             // 
@@ -1655,6 +1670,7 @@
         private FlowLayoutPanel flowLayoutPanel_MemWriteCheckbox;
         private LinkLabel linkLabel_CheckForUpdates;
         private CheckBox checkBox_Bomb;
+        private CheckBox checkBox_RadarBomb;
     }
 }
 
