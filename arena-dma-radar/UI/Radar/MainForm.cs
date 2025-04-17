@@ -20,6 +20,8 @@ using arena_dma_radar.Arena.Features.MemoryWrites;
 using arena_dma_radar.Arena.Features.MemoryWrites.Patches;
 using eft_dma_shared.Common.ESP;
 using eft_dma_shared.Common.Misc.Commercial;
+using eft_dma_shared.Common.Misc.Data;
+using System.Collections.Frozen;
 
 namespace arena_dma_radar.UI.Radar
 {
@@ -477,6 +479,7 @@ namespace arena_dma_radar.UI.Radar
             toolTip1.SetToolTip(checkBox_AdvancedMemWrites, "Enables Advanced Memory Writing Features. These features use a riskier injection technique. Use at your own risk. Includes (but not limited to):\n" +
                 "- Advanced Chams Options.\n" +
                 "- Enhanced reliability of some features (Passive).");
+            toolTip1.SetToolTip(checkBox_Bomb, "Display what player is carrying the Bomb in BlastGang");
         }
 
         /// <summary>
@@ -1791,6 +1794,16 @@ namespace arena_dma_radar.UI.Radar
                 FileName = updatesUrl,
                 UseShellExecute = true
             });
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox_Bomb_CheckedChanged(object sender, EventArgs e)
+        {
+            Config.ESP.PlayerRendering.ShowBomb = checkBox_Bomb.Checked;
         }
     }
 }

@@ -36215,6 +36215,20 @@
             ]
         },
         {
+            "bsgID": "6669a73bef0f6220df0ed178",
+            "name": "BlastGang attacker's backpack",
+            "shortName": "BlastGang",
+            "price": 0,
+            "fleaPrice": 0,
+            "slots": 0,
+            "categories": [
+                "Backpack",
+                "Searchable item",
+                "Compound item",
+                "Item"
+            ]
+        },
+        {
             "bsgID": "60bf74184a63fc79b60c57f6",
             "name": "Bomber beanie",
             "shortName": "Bomber",
