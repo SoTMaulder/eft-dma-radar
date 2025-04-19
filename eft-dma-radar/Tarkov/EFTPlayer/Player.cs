@@ -679,6 +679,12 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
                         Name = "Reshala",
                         Type = PlayerType.AIBoss
                     };
+                case "followerBully":
+                    return new AIRole()
+                    {
+                        Name = "Reshala Guards",
+                        Type = PlayerType.AIBoss
+                    };
                 case "BossGluhar":
                     return new AIRole()
                     {
@@ -721,7 +727,7 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
                         Name = "Big Pipe",
                         Type = PlayerType.AIBoss
                     };
-                case "BossBirdEye":
+                case "BossnopBirdEye":
                     return new AIRole()
                     {
                         Name = "Birdeye",
