@@ -1,4 +1,5 @@
-﻿using eft_dma_radar.Tarkov.API;
+﻿using System;
+using eft_dma_radar.Tarkov.API;
 using eft_dma_radar.Tarkov.EFTPlayer.Plugins;
 using eft_dma_radar.Tarkov.Features.MemoryWrites.Patches;
 using eft_dma_radar.UI.ESP;
@@ -8,12 +9,14 @@ using eft_dma_shared.Common.Misc.Commercial;
 using eft_dma_shared.Common.Misc.Data;
 using eft_dma_shared.Common.Players;
 using eft_dma_shared.Common.Unity;
+using static eft_dma_radar.UI.Radar.MainForm;
 using static SDK.Enums;
 
 namespace eft_dma_radar.Tarkov.EFTPlayer
 {
     public class ObservedPlayer : Player
     {
+        private bool _sentToDiscord = false;
         /// <summary>
         /// Player's Profile & Stats (If Human Player).
         /// </summary>
@@ -205,6 +208,7 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
         {
             if (isActiveParam is not bool isActive)
                 isActive = registered.Contains(this);
+
             if (isActive)
             {
                 if (IsHuman)
@@ -212,10 +216,24 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
                     UpdateMemberCategory();
                     UpdatePlayerName();
                 }
+
                 UpdateHealthStatus();
+
+                if (!_sentToDiscord && (IsPmc || Type == PlayerType.PScav))
+                {
+                    _sentToDiscord = true;
+                    _ = Task.Run(async () =>
+                    {
+                        await Task.Delay(5000); // ⏳ Give Profile time to populate
+                        SendToDiscord();
+                    });
+                }
             }
+
             base.OnRegRefresh(index, registered, isActive);
         }
+
+
 
         private void UpdatePlayerName()
         {
@@ -294,6 +312,50 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
                 LoneLogging.WriteLine($"ERROR updating Health Status for '{Name}': {ex}");
             }
         }
+        private async void SendToDiscord()
+        {
+            try
+            {
+                string edition = Profile?.Acct ?? "--";
+                string level = Profile?.Level.ToString() ?? "--";
+                string hours = Profile?.Hours?.ToString() ?? "--";
+                string kd = Profile?.Overall_KD?.ToString("n2") ?? "--";
+                string raidCount = Profile?.RaidCount?.ToString() ?? "--";
+                string survivePercent = Profile?.SurvivedRate?.ToString("n1") ?? "--";
+
+                string message = $"**🧍 Player Detected**\n" +
+                                 $"Faction: {(IsPmc ? "PMC" : Type == PlayerType.PScav ? "Player Scav" : "Other")}\n" +
+                                 $"Name: `{Name}`\n" +
+                                 $"Edition: `{edition}`\n" +
+                                 $"Level: `{level}`\n" +
+                                 $"Hours: `{hours}`\n" +
+                                 $"KD: `{kd}`\n" +
+                                 $"Raids: `{raidCount}`\n" +
+                                 $"SR: `{survivePercent}%`\n" +
+                                 $"Type: `{Type}`\n" +
+                                 $"AccountID: `{AccountID}`\n" +
+                                 $"GroupID: `{GroupID}`\n" +
+                                 $"[View Profile](https://tarkov.dev/players/regular/{AccountID})";
+
+                var payload = new { content = message };
+                string json = System.Text.Json.JsonSerializer.Serialize(payload);
+
+                var httpContent = new StringContent(json);
+                httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+                using (var client = new HttpClient())
+                {
+                    await client.PostAsync(Program.Config.DiscordWebhookUrl, httpContent);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                LoneLogging.WriteLine("Failed to send player to Discord: " + ex);
+            }
+        }
+
+
 
         /// <summary>
         /// Get the Transform Internal Chain for this Player.

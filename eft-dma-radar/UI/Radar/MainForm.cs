@@ -187,6 +187,7 @@ namespace eft_dma_radar.UI.Radar
         public MainForm()
         {
             InitializeComponent();
+            textBox1.Text = Program.Config.DiscordWebhookUrl;
             this.DoubleBuffered = true;
             this.Size = Config.WindowSize;
             if (Config.WindowMaximized)
@@ -535,10 +536,10 @@ namespace eft_dma_radar.UI.Radar
         {
             // Update config
             Program.Config.MemWrites.HideRaidCode = checkBox_hideRaidcode.Checked;
-        
+
             // Enable or disable the feature
             MemPatchFeature<HideRaidCode>.Instance.Enabled = checkBox_hideRaidcode.Checked;
-        
+
             // Apply the changes immediately
             MemPatchFeature<HideRaidCode>.Instance.TryApply();
         }
@@ -546,10 +547,10 @@ namespace eft_dma_radar.UI.Radar
         {
             // Update config
             Program.Config.MemWrites.StreamerMode = checkBox_streamerMode.Checked;
-        
+
             // Enable or disable the feature
             MemPatchFeature<StreamerMode>.Instance.Enabled = checkBox_streamerMode.Checked;
-        
+
             // Apply the changes immediately
             MemPatchFeature<StreamerMode>.Instance.TryApply();
         }
@@ -3649,7 +3650,7 @@ namespace eft_dma_radar.UI.Radar
 
         private void button_WebRadarStart_Click(object sender, EventArgs e) =>
             StartWebRadar();
-        private void button_EspServerStart_Click(object sender, EventArgs e) => 
+        private void button_EspServerStart_Click(object sender, EventArgs e) =>
             StartWebEsp();
 
         private void checkBox_WebRadarUPNP_CheckedChanged(object sender, EventArgs e)
@@ -3799,6 +3800,11 @@ namespace eft_dma_radar.UI.Radar
                 FileName = updatesUrl,
                 UseShellExecute = true
             });
+        }
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            Program.Config.DiscordWebhookUrl = textBox1.Text.Trim();
+            Program.Config.Save(); // instantly save it
         }
     }
 }

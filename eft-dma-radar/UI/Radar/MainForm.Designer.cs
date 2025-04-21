@@ -262,6 +262,8 @@ namespace eft_dma_radar.UI.Radar
             tabPage3 = new TabPage();
             richTextBox_PlayersInfo = new RichTextBox();
             tabPage4 = new TabPage();
+            textBox1 = new TextBox();
+            label32 = new Label();
             dataGridView_PlayerHistory = new DataGridView();
             PHistory_Name = new DataGridViewTextBoxColumn();
             PHistory_AccountID = new DataGridViewTextBoxColumn();
@@ -1260,7 +1262,7 @@ namespace eft_dma_radar.UI.Radar
             // button_EspServerStart
             // 
             button_EspServerStart.Enabled = false;
-            button_EspServerStart.Location = new Point(9, 24);
+            button_EspServerStart.Location = new Point(111, 24);
             button_EspServerStart.Name = "button_EspServerStart";
             button_EspServerStart.Size = new Size(96, 31);
             button_EspServerStart.TabIndex = 56;
@@ -1274,7 +1276,7 @@ namespace eft_dma_radar.UI.Radar
             checkBox_WebRadarUPNP.AutoSize = true;
             checkBox_WebRadarUPNP.Checked = true;
             checkBox_WebRadarUPNP.CheckState = CheckState.Checked;
-            checkBox_WebRadarUPNP.Location = new Point(111, 30);
+            checkBox_WebRadarUPNP.Location = new Point(213, 30);
             checkBox_WebRadarUPNP.Name = "checkBox_WebRadarUPNP";
             checkBox_WebRadarUPNP.Size = new Size(55, 19);
             checkBox_WebRadarUPNP.TabIndex = 57;
@@ -1286,7 +1288,7 @@ namespace eft_dma_radar.UI.Radar
             // 
             label_WebRadarHost.Anchor = AnchorStyles.Right;
             label_WebRadarHost.AutoSize = true;
-            label_WebRadarHost.Location = new Point(172, 32);
+            label_WebRadarHost.Location = new Point(274, 32);
             label_WebRadarHost.Name = "label_WebRadarHost";
             label_WebRadarHost.Size = new Size(44, 15);
             label_WebRadarHost.TabIndex = 49;
@@ -1295,7 +1297,7 @@ namespace eft_dma_radar.UI.Radar
             // textBox_WebRadarBindIP
             // 
             textBox_WebRadarBindIP.Anchor = AnchorStyles.Right;
-            textBox_WebRadarBindIP.Location = new Point(222, 28);
+            textBox_WebRadarBindIP.Location = new Point(324, 28);
             textBox_WebRadarBindIP.MaxLength = 128;
             textBox_WebRadarBindIP.Name = "textBox_WebRadarBindIP";
             textBox_WebRadarBindIP.Size = new Size(154, 23);
@@ -1306,7 +1308,7 @@ namespace eft_dma_radar.UI.Radar
             // 
             label_WebRadarPort.Anchor = AnchorStyles.Right;
             label_WebRadarPort.AutoSize = true;
-            label_WebRadarPort.Location = new Point(382, 32);
+            label_WebRadarPort.Location = new Point(484, 32);
             label_WebRadarPort.Name = "label_WebRadarPort";
             label_WebRadarPort.Size = new Size(29, 15);
             label_WebRadarPort.TabIndex = 51;
@@ -1315,7 +1317,7 @@ namespace eft_dma_radar.UI.Radar
             // textBox_WebRadarPort
             // 
             textBox_WebRadarPort.Anchor = AnchorStyles.Right;
-            textBox_WebRadarPort.Location = new Point(417, 28);
+            textBox_WebRadarPort.Location = new Point(519, 28);
             textBox_WebRadarPort.MaxLength = 5;
             textBox_WebRadarPort.Name = "textBox_WebRadarPort";
             textBox_WebRadarPort.Size = new Size(57, 23);
@@ -1326,7 +1328,7 @@ namespace eft_dma_radar.UI.Radar
             // 
             label_WebRadarTickRate.Anchor = AnchorStyles.Right;
             label_WebRadarTickRate.AutoSize = true;
-            label_WebRadarTickRate.Location = new Point(480, 32);
+            label_WebRadarTickRate.Location = new Point(582, 32);
             label_WebRadarTickRate.Name = "label_WebRadarTickRate";
             label_WebRadarTickRate.Size = new Size(80, 15);
             label_WebRadarTickRate.TabIndex = 59;
@@ -1335,7 +1337,7 @@ namespace eft_dma_radar.UI.Radar
             // textBox_WebRadarTickRate
             // 
             textBox_WebRadarTickRate.Anchor = AnchorStyles.Right;
-            textBox_WebRadarTickRate.Location = new Point(566, 28);
+            textBox_WebRadarTickRate.Location = new Point(668, 28);
             textBox_WebRadarTickRate.MaxLength = 3;
             textBox_WebRadarTickRate.Name = "textBox_WebRadarTickRate";
             textBox_WebRadarTickRate.Size = new Size(43, 23);
@@ -1347,7 +1349,7 @@ namespace eft_dma_radar.UI.Radar
             // 
             label_WebRadarPassword.Anchor = AnchorStyles.Right;
             label_WebRadarPassword.AutoSize = true;
-            label_WebRadarPassword.Location = new Point(615, 32);
+            label_WebRadarPassword.Location = new Point(717, 32);
             label_WebRadarPassword.Name = "label_WebRadarPassword";
             label_WebRadarPassword.Size = new Size(57, 15);
             label_WebRadarPassword.TabIndex = 53;
@@ -1356,7 +1358,7 @@ namespace eft_dma_radar.UI.Radar
             // textBox_WebRadarPassword
             // 
             textBox_WebRadarPassword.Anchor = AnchorStyles.Right;
-            textBox_WebRadarPassword.Location = new Point(678, 28);
+            textBox_WebRadarPassword.Location = new Point(780, 28);
             textBox_WebRadarPassword.MaxLength = 10;
             textBox_WebRadarPassword.Name = "textBox_WebRadarPassword";
             textBox_WebRadarPassword.ReadOnly = true;
@@ -1367,7 +1369,7 @@ namespace eft_dma_radar.UI.Radar
             // 
             linkLabel_WebRadarLink.Anchor = AnchorStyles.Right;
             linkLabel_WebRadarLink.AutoSize = true;
-            linkLabel_WebRadarLink.Location = new Point(788, 32);
+            linkLabel_WebRadarLink.Location = new Point(890, 32);
             linkLabel_WebRadarLink.Name = "linkLabel_WebRadarLink";
             linkLabel_WebRadarLink.Size = new Size(42, 15);
             linkLabel_WebRadarLink.TabIndex = 55;
@@ -3120,6 +3122,8 @@ namespace eft_dma_radar.UI.Radar
             // 
             // tabPage4
             // 
+            tabPage4.Controls.Add(textBox1);
+            tabPage4.Controls.Add(label32);
             tabPage4.Controls.Add(dataGridView_PlayerHistory);
             tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
@@ -3127,6 +3131,28 @@ namespace eft_dma_radar.UI.Radar
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Player History";
             tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(937, 31);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(135, 23);
+            textBox1.TabIndex = 2;
+            textBox1.TextChanged += textBox1_TextChanged;
+            // 
+            // label32
+            // 
+            label32.BackColor = SystemColors.ControlDarkDark;
+            label32.BorderStyle = BorderStyle.FixedSingle;
+            label32.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label32.ForeColor = SystemColors.Control;
+            label32.Location = new Point(937, 3);
+            label32.Margin = new Padding(3);
+            label32.Name = "label32";
+            label32.Size = new Size(135, 22);
+            label32.TabIndex = 1;
+            label32.Text = "Insert Webhook Here";
+            label32.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // dataGridView_PlayerHistory
             // 
@@ -3590,6 +3616,7 @@ namespace eft_dma_radar.UI.Radar
             ((ISupportInitialize)trackBar_EspLineScale).EndInit();
             tabPage3.ResumeLayout(false);
             tabPage4.ResumeLayout(false);
+            tabPage4.PerformLayout();
             ((ISupportInitialize)dataGridView_PlayerHistory).EndInit();
             tabPage5.ResumeLayout(false);
             ((ISupportInitialize)dataGridView_Watchlist).EndInit();
@@ -3872,6 +3899,8 @@ namespace eft_dma_radar.UI.Radar
         private CheckBox checkBox_hideRaidcode;
         private CheckBox checkBox_streamerMode;
         private LinkLabel linkLabel_CheckForUpdates;
+        private Label label32;
+        private TextBox textBox1;
     }
 }
 

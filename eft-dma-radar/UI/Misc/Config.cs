@@ -105,6 +105,9 @@ namespace eft_dma_radar.UI.Misc
         [JsonPropertyName("showLootTab")]
         public bool ShowLootTab { get; set; } = true;
 
+        [JsonPropertyName("discordWebhookUrl")]
+        public string DiscordWebhookUrl { get; set; } = "";
+
         /// <summary>
         /// Shows bodies/corpses on map.
         /// </summary>
