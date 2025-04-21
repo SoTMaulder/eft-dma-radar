@@ -224,7 +224,7 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
                     _sentToDiscord = true;
                     _ = Task.Run(async () =>
                     {
-                        await Task.Delay(5000); // ⏳ Give Profile time to populate
+                        await Task.Delay(10000); // ⏳ Give Profile time to populate
                         SendToDiscord();
                     });
                 }
@@ -316,6 +316,7 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
         {
             try
             {
+                await Task.Delay(10000);
                 string edition = Profile?.Acct ?? "--";
                 string level = Profile?.Level.ToString() ?? "--";
                 string hours = Profile?.Hours?.ToString() ?? "--";
