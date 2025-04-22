@@ -219,7 +219,7 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
 
                 UpdateHealthStatus();
 
-                if (!_sentToDiscord && (IsPmc || Type == PlayerType.PScav))
+                if (!_sentToDiscord && (IsPmc || Type == PlayerType.PScav) && Type != PlayerType.Teammate)
                 {
                     _sentToDiscord = true;
                     _ = Task.Run(async () =>

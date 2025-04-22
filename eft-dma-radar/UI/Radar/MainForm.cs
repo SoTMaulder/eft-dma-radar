@@ -33,6 +33,10 @@ using System.Timers;
 using static eft_dma_radar.UI.Hotkeys.HotkeyManager;
 using static eft_dma_radar.UI.Hotkeys.HotkeyManager.HotkeyActionController;
 using Timer = System.Timers.Timer;
+using System.CodeDom;
+using SkiaSharp;
+using System.Net.Http.Json;
+using static eft_dma_radar.Tarkov.API.EFTProfileService;
 
 namespace eft_dma_radar.UI.Radar
 {
@@ -1616,24 +1620,73 @@ namespace eft_dma_radar.UI.Radar
         /// <summary>
         /// Refresh quest helper (if enabled).
         /// </summary>
+        /// 
+        private bool _kappa = false;
+        QuestListItem[] nonKappa = null;
         private void RefreshQuestHelper()
         {
+            var currentList = checkedListBox_QuestHelper.Items.Cast<QuestListItem>().ToArray();
+            Dictionary<string, int> listidforid = new Dictionary<string, int>();
+            for (int i = 0; i < currentList.Length; i++)
+            {
+                listidforid[currentList[i].Id] = i;
+            }
+
             if (Config.QuestHelper.Enabled && Memory.InRaid && Memory.QuestManager is QuestManager quests)
             {
-                var currentList = checkedListBox_QuestHelper.Items.Cast<QuestListItem>().ToArray();
-                foreach (var quest in quests.CurrentQuests)
+                checkedListBox_QuestHelper.BeginUpdate();
+
+                foreach (var questId in quests.CurrentQuests)
                 {
-                    if (!currentList.Any(x => x.Id.Equals(quest, StringComparison.OrdinalIgnoreCase)))
+                    if (!currentList.Any(x => x.Id.Equals(questId, StringComparison.OrdinalIgnoreCase)))
                     {
-                        bool enabled = !Config.QuestHelper.BlacklistedQuests.Contains(quest, StringComparer.OrdinalIgnoreCase);
-                        checkedListBox_QuestHelper.Items.Add(new QuestListItem(quest), enabled);
+                        bool enabled = !Config.QuestHelper.BlacklistedQuests.Contains(questId, StringComparer.OrdinalIgnoreCase);
+                        checkedListBox_QuestHelper.Items.Add(new QuestListItem(questId), enabled);
                     }
                 }
+
+                List<QuestListItem> questsToBlacklist = new();
+                List<QuestListItem> questsToUnblacklist = new();
+
                 foreach (var existing in currentList)
                 {
                     if (!quests.CurrentQuests.Contains(existing.Id))
+                    {
                         checkedListBox_QuestHelper.Items.Remove(existing);
+                        continue;
+                    }
+
+                    if (checkBox_KappaOnly.Checked)
+                    {
+                        if (!existing.KappaRequired)
+                        {
+                            if (!Config.QuestHelper.BlacklistedQuests.Contains(existing.Id))
+                                Config.QuestHelper.BlacklistedQuests.Add(existing.Id);
+
+                            if (listidforid.TryGetValue(existing.Id, out int idx))
+                                checkedListBox_QuestHelper.SetItemChecked(idx, false);
+
+                            questsToBlacklist.Add(existing);
+                        }
+                    }
+                    else
+                    {
+                        if (Config.QuestHelper.BlacklistedQuests.Contains(existing.Id))
+                        {
+                            Config.QuestHelper.BlacklistedQuests.Remove(existing.Id);
+
+                            if (listidforid.TryGetValue(existing.Id, out int idx))
+                                checkedListBox_QuestHelper.SetItemChecked(idx, true);
+
+                            questsToUnblacklist.Add(existing);
+                        }
+                    }
                 }
+
+                nonKappa = checkBox_KappaOnly.Checked ? questsToBlacklist.ToArray() : null;
+                _kappa = checkBox_KappaOnly.Checked;
+
+                checkedListBox_QuestHelper.EndUpdate();
             }
         }
 
@@ -1675,6 +1728,75 @@ namespace eft_dma_radar.UI.Radar
             _lootFiltersItemSearchTimer.Elapsed += impLootSearchTimer_Elapsed;
             _lootMenuTimer.Elapsed += lootMenuTimer_Elapsed;
         }
+
+        public sealed class TaskQuery
+        {
+            [JsonPropertyName("data")]
+            public TaskData Data { get; set; }
+
+        }
+
+        public sealed class TaskData
+        {
+            [JsonPropertyName("task")]
+            public TaskItems Task { get; set; }
+
+        }
+
+        public sealed class TaskItems
+        {
+            [JsonPropertyName("availableDelaySecondsMax")]
+            public int AvailableDelaySecondsMax { get; set; }
+            [JsonPropertyName("availableDelaySecondsMin")]
+            public int AvailableDelaySecondsMin { get; set; }
+            [JsonPropertyName("descriptionMessageId")]
+            public string DescriptionMessageId { get; set; }
+            [JsonPropertyName("experience")]
+            public int Experience { get; set; }
+            [JsonPropertyName("factionName")]
+            public string FactionName { get; set; }
+            [JsonPropertyName("failMessageId")]
+            public string FailMessageId { get; set; }
+            [JsonPropertyName("id")]
+            public string Id { get; set; }
+            [JsonPropertyName("kappaRequired")]
+            public bool KappaRequired { get; set; }
+            [JsonPropertyName("lightkeeperRequired")]
+            public bool LightkeeperRequired { get; set; }
+            [JsonPropertyName("minPlayerLevel")]
+            public int MinPlayerLevel { get; set; }
+            [JsonPropertyName("name")]
+            public string Name { get; set; }
+            [JsonPropertyName("normalizedName")]
+            public string NormalizedName { get; set; }
+            [JsonPropertyName("restartable")]
+            public bool Restartable { get; set; }
+            [JsonPropertyName("startMessageId")]
+            public string StartMessageId { get; set; }
+            [JsonPropertyName("successMessageId")]
+            public string SuccessMessageId { get; set; }
+            [JsonPropertyName("tarkovDataId")]
+            public string TarkovDataId { get; set; }
+            [JsonPropertyName("taskImageLink")]
+            public string TaskImageLink { get; set; }
+            [JsonPropertyName("wikiLink")]
+            public string WikiLink { get; set; }
+            [JsonPropertyName("map")]
+            public TaskMap Map { get; set; }
+        }
+
+        public class TaskMap
+        {
+            [JsonPropertyName("name")]
+            public string Name { get; set; }
+            [JsonPropertyName("nameId")]
+            public string NameId { get; set; }
+            [JsonPropertyName("description")]
+            public string Description { get; set; }
+            [JsonPropertyName("id")]
+            public string Id { get; set; }
+        }
+
 
         /// <summary>
         /// Sets Mouseover Tooltips for Winforms Controls.
@@ -3805,6 +3927,15 @@ namespace eft_dma_radar.UI.Radar
         {
             Program.Config.DiscordWebhookUrl = textBox1.Text.Trim();
             Program.Config.Save(); // instantly save it
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_QuestHelper_Enabled.Checked)
+            {
+                RefreshQuestHelper();
+            }
+
         }
     }
 }

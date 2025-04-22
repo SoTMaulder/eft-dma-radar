@@ -103,6 +103,7 @@ namespace eft_dma_radar.UI.Radar
             label34 = new Label();
             checkBox_QuestHelper_Enabled = new CheckBox();
             checkedListBox_QuestHelper = new CheckedListBox();
+            checkBox_KappaOnly = new CheckBox();
             flowLayoutPanel_WebRadarSettings = new FlowLayoutPanel();
             label9 = new Label();
             label25 = new Label();
@@ -1163,6 +1164,7 @@ namespace eft_dma_radar.UI.Radar
             flowLayoutPanel1.Controls.Add(label34);
             flowLayoutPanel1.Controls.Add(checkBox_QuestHelper_Enabled);
             flowLayoutPanel1.Controls.Add(checkedListBox_QuestHelper);
+            flowLayoutPanel1.Controls.Add(checkBox_KappaOnly);
             flowLayoutPanel1.Dock = DockStyle.Top;
             flowLayoutPanel_Settings.SetFlowBreak(flowLayoutPanel1, true);
             flowLayoutPanel1.Location = new Point(3, 350);
@@ -1203,6 +1205,17 @@ namespace eft_dma_radar.UI.Radar
             checkedListBox_QuestHelper.Name = "checkedListBox_QuestHelper";
             checkedListBox_QuestHelper.Size = new Size(343, 148);
             checkedListBox_QuestHelper.TabIndex = 48;
+            // 
+            // checkBox_KappaOnly
+            // 
+            checkBox_KappaOnly.AutoSize = true;
+            checkBox_KappaOnly.Location = new Point(426, 28);
+            checkBox_KappaOnly.Name = "checkBox_KappaOnly";
+            checkBox_KappaOnly.Size = new Size(169, 19);
+            checkBox_KappaOnly.TabIndex = 49;
+            checkBox_KappaOnly.Text = "Show Kappa Required Only";
+            checkBox_KappaOnly.UseVisualStyleBackColor = true;
+            checkBox_KappaOnly.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // flowLayoutPanel_WebRadarSettings
             // 
@@ -3901,6 +3914,7 @@ namespace eft_dma_radar.UI.Radar
         private LinkLabel linkLabel_CheckForUpdates;
         private Label label32;
         private TextBox textBox1;
+        private CheckBox checkBox_KappaOnly;
     }
 }
 
