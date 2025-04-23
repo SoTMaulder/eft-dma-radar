@@ -317,26 +317,24 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
             try
             {
                 await Task.Delay(10000);
-                string edition = Profile?.Acct ?? "--";
-                string level = Profile?.Level.ToString() ?? "--";
-                string hours = Profile?.Hours?.ToString() ?? "--";
-                string kd = Profile?.Overall_KD?.ToString("n2") ?? "--";
-                string raidCount = Profile?.RaidCount?.ToString() ?? "--";
-                string survivePercent = Profile?.SurvivedRate?.ToString("n1") ?? "--";
+                string edition = Profile?.Acct ?? "";
+                string level = Profile?.Level.ToString() ?? "";
+                string hours = Profile?.Hours?.ToString() ?? "";
+                string kd = Profile?.Overall_KD?.ToString("n2") ?? "";
+                string raidCount = Profile?.RaidCount?.ToString() ?? "";
+                string survivePercent = Profile?.SurvivedRate?.ToString("n1") ?? "";
+                string factionDisplay = IsPmc
+    ? PlayerSide == Enums.EPlayerSide.Usec ? "USEC" :
+      PlayerSide == Enums.EPlayerSide.Bear ? "BEAR" : "PMC"
+    : Type == PlayerType.PScav ? "Player Scav" : "Other";
 
-                string message = $"**🧍 Player Detected**\n" +
-                                 $"Faction: {(IsPmc ? "PMC" : Type == PlayerType.PScav ? "Player Scav" : "Other")}\n" +
-                                 $"Name: `{Name}`\n" +
-                                 $"Edition: `{edition}`\n" +
-                                 $"Level: `{level}`\n" +
-                                 $"Hours: `{hours}`\n" +
-                                 $"KD: `{kd}`\n" +
-                                 $"Raids: `{raidCount}`\n" +
-                                 $"SR: `{survivePercent}%`\n" +
-                                 $"Type: `{Type}`\n" +
-                                 $"AccountID: `{AccountID}`\n" +
-                                 $"GroupID: `{GroupID}`\n" +
-                                 $"[View Profile](https://tarkov.dev/players/regular/{AccountID})";
+
+
+                string message =
+    "🚨 **Tarkov Player Detected!** 🚨\n\n" +
+    $"**🧍 Info:** `{Name}` | `{factionDisplay}` | `{edition}`\n" +
+    $"**📊 Stats:** Lv.`{level}.` | `{hours} Hours.` | K/D `{kd}.` | Raids `{raidCount}.` | Survival `{survivePercent}%.`\n" +
+    $"**🧾 Account:** `{AccountID}` | Group `{GroupID}.` | [🔗 Profile](https://tarkov.dev/players/regular/{AccountID})";
 
                 var payload = new { content = message };
                 string json = System.Text.Json.JsonSerializer.Serialize(payload);
@@ -347,7 +345,6 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
                 using (var client = new HttpClient())
                 {
                     await client.PostAsync(Program.Config.DiscordWebhookUrl, httpContent);
-
                 }
             }
             catch (Exception ex)
@@ -355,6 +352,7 @@ namespace eft_dma_radar.Tarkov.EFTPlayer
                 LoneLogging.WriteLine("Failed to send player to Discord: " + ex);
             }
         }
+
 
 
 
