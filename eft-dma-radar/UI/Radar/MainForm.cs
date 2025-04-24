@@ -3937,5 +3937,13 @@ namespace eft_dma_radar.UI.Radar
             }
 
         }
+        private void checkBox_KappaOnly_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_QuestHelper_Enabled.Checked)
+            {
+                RefreshQuestHelper();
+            }
+
+        }
     }
 }

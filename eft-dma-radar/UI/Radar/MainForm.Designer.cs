@@ -1,4 +1,5 @@
-﻿using eft_dma_radar.UI.Misc;
+﻿using System.Windows.Forms;
+using eft_dma_radar.UI.Misc;
 
 namespace eft_dma_radar.UI.Radar
 {
@@ -1163,13 +1164,13 @@ namespace eft_dma_radar.UI.Radar
             flowLayoutPanel1.BorderStyle = BorderStyle.FixedSingle;
             flowLayoutPanel1.Controls.Add(label34);
             flowLayoutPanel1.Controls.Add(checkBox_QuestHelper_Enabled);
-            flowLayoutPanel1.Controls.Add(checkedListBox_QuestHelper);
             flowLayoutPanel1.Controls.Add(checkBox_KappaOnly);
+            flowLayoutPanel1.Controls.Add(checkedListBox_QuestHelper);
             flowLayoutPanel1.Dock = DockStyle.Top;
-            flowLayoutPanel_Settings.SetFlowBreak(flowLayoutPanel1, true);
-            flowLayoutPanel1.Location = new Point(3, 350);
+            flowLayoutPanel5.SetFlowBreak(flowLayoutPanel1, true);
+            flowLayoutPanel1.Location = new Point(447, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(1230, 181);
+            flowLayoutPanel1.Size = new Size(351, 166);
             flowLayoutPanel1.TabIndex = 62;
             // 
             // label34
@@ -1209,13 +1210,14 @@ namespace eft_dma_radar.UI.Radar
             // checkBox_KappaOnly
             // 
             checkBox_KappaOnly.AutoSize = true;
-            checkBox_KappaOnly.Location = new Point(426, 28);
+            flowLayoutPanel1.SetFlowBreak(checkBox_KappaOnly, true);
+            checkBox_KappaOnly.Location = new Point(163, 24);
             checkBox_KappaOnly.Name = "checkBox_KappaOnly";
-            checkBox_KappaOnly.Size = new Size(169, 19);
-            checkBox_KappaOnly.TabIndex = 49;
-            checkBox_KappaOnly.Text = "Show Kappa Required Only";
+            checkBox_KappaOnly.Size = new Size(137, 19);
+            checkBox_KappaOnly.TabIndex = 63;
+            checkBox_KappaOnly.Text = "Only Kappa Required";
             checkBox_KappaOnly.UseVisualStyleBackColor = true;
-            checkBox_KappaOnly.CheckedChanged += checkBox1_CheckedChanged;
+            checkBox_KappaOnly.CheckedChanged += checkBox_KappaOnly_CheckedChanged;
             // 
             // flowLayoutPanel_WebRadarSettings
             // 
@@ -3564,7 +3566,7 @@ namespace eft_dma_radar.UI.Radar
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4, 3, 4, 3);
             Name = "MainForm";
-            Text = "Plugware v0.69";
+            Text = "Plugware v1.3";
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();

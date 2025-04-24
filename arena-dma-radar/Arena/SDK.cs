@@ -4,28 +4,28 @@ namespace SDK
     {
         public readonly partial struct NoMalfunctions
         {
-            public const uint ClassName_ClassToken = 0x2001BB9; // MDToken
-            public const uint GetMalfunctionState_MethodToken = 0x600ABBC; // MDToken
+            public const uint ClassName_ClassToken = 0x2001BBA; // MDToken
+            public const uint GetMalfunctionState_MethodToken = 0x600ABD1; // MDToken
             public const string ClassName = @"EFT.Player+FirearmController";
             public const string GetMalfunctionState = @"GetMalfunctionState";
         }
 
         public readonly partial struct FirearmController
         {
-            public const uint ClassName_ClassToken = 0x2001BB9; // MDToken
+            public const uint ClassName_ClassToken = 0x2001BBA; // MDToken
             public const string ClassName = @"EFT.Player+FirearmController";
         }
 
         public readonly partial struct OpticCameraManagerContainer
         {
-            public const uint ClassName_ClassToken = 0x2003555; // MDToken
+            public const uint ClassName_ClassToken = 0x2003557; // MDToken
             public const string ClassName = @"\uF220";
         }
 
         public readonly partial struct ProceduralWeaponAnimation
         {
-            public const uint ClassName_ClassToken = 0x20028FE; // MDToken
-            public const uint MethodName_MethodToken = 0x600FA4F; // MDToken
+            public const uint ClassName_ClassToken = 0x20028FF; // MDToken
+            public const uint MethodName_MethodToken = 0x600FA66; // MDToken
             public const string ClassName = @"EFT.Animations.ProceduralWeaponAnimation";
             public const string MethodName = @"get_ShotNeedsFovAdjustments";
         }
@@ -82,10 +82,10 @@ namespace SDK
 
         public readonly partial struct ObservedPlayerController
         {
-            public static readonly uint[] MovementController = new uint[] { 0xF0, 0x10 }; // -.\uEDFB, -.\uEDFD
-            public const uint HandsController = 0x100; // -.\uEDE6
-            public const uint HealthController = 0x118; // -.\uE454
-            public const uint InventoryController = 0x140; // -.\uEDCE
+            public static readonly uint[] MovementController = new uint[] { 0x100, 0x10 }; // -.\uEDFB, -.\uEDFD
+            public const uint HandsController = 0x110; // -.\uEDE6
+            public const uint HealthController = 0x128; // -.\uE454
+            public const uint InventoryController = 0x150; // -.\uEDCE
         }
 
         public readonly partial struct ObservedMovementController
@@ -177,7 +177,7 @@ namespace SDK
 
         public readonly partial struct ClientFirearmController
         {
-            public const uint ShotIndex = 0x408; // SByte
+            public const uint ShotIndex = 0x420; // SByte
         }
 
         public readonly partial struct MovementContext
