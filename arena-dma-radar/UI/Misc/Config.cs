@@ -9,13 +9,13 @@ using eft_dma_shared.Common.ESP;
 using eft_dma_shared.Common.Players;
 using eft_dma_shared.Common.Misc.Config;
 
-namespace arena_dma_radar.UI.Misc
-{
+namespace arena_dma_radar.UI.Misc {
+
     /// <summary>
     /// Global Program Configuration (Config.json)
     /// </summary>
-    public sealed class Config : IConfig
-    {
+    public sealed class Config : IConfig {
+
         #region ISharedConfig
 
         public bool MemWritesEnabled => MemWrites.MemWritesEnabled;
@@ -25,7 +25,7 @@ namespace arena_dma_radar.UI.Misc
 
         public bool AdvancedMemWrites => this.MemWrites.AdvancedMemWrites;
 
-        #endregion
+        #endregion ISharedConfig
 
         /// <summary>
         /// Target FPS for the 2D Radar.
@@ -137,6 +137,12 @@ namespace arena_dma_radar.UI.Misc
         public Dictionary<RadarColorOption, string> Colors { get; set; } = RadarColorOptions.GetDefaultColors();
 
         /// <summary>
+        /// Custom Teammate Colors. Key: AccountID, Value: Color Hex String.
+        /// </summary>
+        [JsonPropertyName("customTeammateColors")]
+        public Dictionary<string, string> CustomTeammateColors { get; set; } = new();
+
+        /// <summary>
         /// DMA Toolkit (Write Features) Config.
         /// </summary>
         [JsonInclude]
@@ -184,37 +190,24 @@ namespace arena_dma_radar.UI.Misc
         /// Only call once! This must be a singleton.
         /// </summary>
         /// <returns>Config Instance.</returns>
-        public static Config Load()
-        {
-            lock (_syncRoot)
-            {
-                try
-                {
+        public static Config Load() {
+            lock (_syncRoot) {
+                try {
                     Config config;
-                    if (_configFile.Exists)
-                    {
-                        try
-                        {
-                            try
-                            {
+                    if (_configFile.Exists) {
+                        try {
+                            try {
                                 var json = File.ReadAllText(_configFile.FullName);
                                 config = JsonSerializer.Deserialize<Config>(json);
-                            }
-                            catch (JsonException)
-                            {
-                                if (_tempFile.Exists)
-                                {
+                            } catch (JsonException) {
+                                if (_tempFile.Exists) {
                                     var json = File.ReadAllText(_tempFile.FullName);
                                     config = JsonSerializer.Deserialize<Config>(json);
-                                }
-                                else
-                                {
+                                } else {
                                     throw;
                                 }
                             }
-                        }
-                        catch (JsonException ex)
-                        {
+                        } catch (JsonException ex) {
                             MessageBox.Show(
                                 $"Config File Corruption Detected! If you backed up your config, you may attempt to restore it to \\%AppData%\\Lones-Client (Close the Program *before* attempting restoration).\n\n" +
                                 $"Error: {ex.Message}",
@@ -223,17 +216,13 @@ namespace arena_dma_radar.UI.Misc
                                 MessageBoxIcon.Error);
                             config = new Config();
                         }
-                    }
-                    else
-                    {
+                    } else {
                         config = new Config();
                         SaveInternal(config);
                     }
 
                     return config;
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     throw new IOException($"ERROR Loading Config: {ex.Message}");
                 }
             }
@@ -242,16 +231,11 @@ namespace arena_dma_radar.UI.Misc
         /// <summary>
         /// Save this Config Instance to Disk.
         /// </summary>
-        public void Save()
-        {
-            lock (_syncRoot)
-            {
-                try
-                {
+        public void Save() {
+            lock (_syncRoot) {
+                try {
                     SaveInternal(this);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     throw new IOException($"ERROR Saving Config: {ex.Message}");
                 }
             }
@@ -263,10 +247,8 @@ namespace arena_dma_radar.UI.Misc
         /// <returns></returns>
         public async Task SaveAsync() => await Task.Run(Save);
 
-        private static void SaveInternal(Config config)
-        {
-            var options = new JsonSerializerOptions
-            {
+        private static void SaveInternal(Config config) {
+            var options = new JsonSerializerOptions {
                 WriteIndented = true
             };
             var json = JsonSerializer.Serialize(config, options);
@@ -275,11 +257,11 @@ namespace arena_dma_radar.UI.Misc
             _tempFile.Delete();
         }
 
-        #endregion
+        #endregion Config Interface
     }
 
-    public sealed class MemWritesConfig
-    {
+    public sealed class MemWritesConfig {
+
         /// <summary>
         /// Enables DMA Memory Writing
         /// </summary>
@@ -341,8 +323,8 @@ namespace arena_dma_radar.UI.Misc
         public AimbotConfig Aimbot { get; set; } = new();
     }
 
-    public sealed class AimbotConfig
-    {
+    public sealed class AimbotConfig {
+
         /// <summary>
         /// Enable Aimbot Feature on Startup.
         /// </summary>
@@ -380,8 +362,8 @@ namespace arena_dma_radar.UI.Misc
         public AimbotRandomBoneConfig RandomBone { get; set; } = new();
     }
 
-    public sealed class AimbotRandomBoneConfig
-    {
+    public sealed class AimbotRandomBoneConfig {
+
         [JsonIgnore]
         private static readonly Random _rng = new();
 
@@ -390,21 +372,25 @@ namespace arena_dma_radar.UI.Misc
         /// </summary>
         [JsonPropertyName("enabled")]
         public bool Enabled { get; set; } = false;
+
         /// <summary>
         /// Head shot percentage.
         /// </summary>
         [JsonPropertyName("headPercent")]
         public int HeadPercent { get; set; } = 10;
+
         /// <summary>
         /// Torso shot percentage.
         /// </summary>
         [JsonPropertyName("torsoPercent")]
         public int TorsoPercent { get; set; } = 30;
+
         /// <summary>
         /// Arms shot percentage.
         /// </summary>
         [JsonPropertyName("armsPercent")]
         public int ArmsPercent { get; set; } = 30;
+
         /// <summary>
         /// Legs shot percentage.
         /// </summary>
@@ -421,20 +407,18 @@ namespace arena_dma_radar.UI.Misc
         /// <summary>
         /// Reset all values to defaults.
         /// </summary>
-        public void ResetDefaults()
-        {
+        public void ResetDefaults() {
             HeadPercent = 10;
             TorsoPercent = 30;
             ArmsPercent = 30;
             LegsPercent = 30;
         }
-        
+
         /// <summary>
         /// Returns a random bone via the selected percentages.
         /// </summary>
         /// <returns>Skeleton Bone.</returns>
-        public Bones GetRandomBone()
-        {
+        public Bones GetRandomBone() {
             if (!Is100Percent)
                 ResetDefaults();
             int roll = _rng.Next(0, 100) + 1;
@@ -449,8 +433,8 @@ namespace arena_dma_radar.UI.Misc
         }
     }
 
-    public sealed class SilentAimConfig
-    {
+    public sealed class SilentAimConfig {
+
         /// <summary>
         /// Automatically select best target bone.
         /// </summary>
@@ -464,8 +448,8 @@ namespace arena_dma_radar.UI.Misc
         public bool SafeLock { get; set; } = true;
     }
 
-    public sealed class ESPConfig
-    {
+    public sealed class ESPConfig {
+
         /// <summary>
         /// Show FPS Counter in ESP Window.
         /// </summary>
@@ -485,11 +469,7 @@ namespace arena_dma_radar.UI.Misc
         public bool ShowFireportAim { get; set; } = true;
 
         [JsonPropertyName("playerRendering")]
-        /// <summary>
-        /// Player rendering options in ESP.
-        /// </summary>
-        public ESPPlayerRenderOptions PlayerRendering { get; set; } = new()
-        {
+        public ESPPlayerRenderOptions PlayerRendering { get; set; } = new() {
             RenderingMode = ESPPlayerRenderMode.Bones,
             ShowLabels = true,
             ShowWeapons = true,
@@ -573,8 +553,8 @@ namespace arena_dma_radar.UI.Misc
         public Dictionary<EspColorOption, string> Colors { get; set; } = EspColorOptions.GetDefaultColors();
     }
 
-    public sealed class ESPPlayerRenderOptions
-    {
+    public sealed class ESPPlayerRenderOptions {
+
         /// <summary>
         /// Mode to draw in ESP.
         /// </summary>
@@ -603,8 +583,8 @@ namespace arena_dma_radar.UI.Misc
         public bool ShowBomb { get; set; }
     }
 
-    public sealed class WidgetsConfig
-    {
+    public sealed class WidgetsConfig {
+
         #region ESP Widget
 
         [JsonInclude]
@@ -618,20 +598,19 @@ namespace arena_dma_radar.UI.Misc
         /// Aimview Location
         /// </summary>
         [JsonIgnore]
-        public SKRect ESPWidgetLocation
-        {
+        public SKRect ESPWidgetLocation {
             get => new(_espWidgetLoc.Left, _espWidgetLoc.Top, _espWidgetLoc.Right, _espWidgetLoc.Bottom);
             set => _espWidgetLoc = new RectFSer(value.Left, value.Top, value.Right, value.Bottom);
         }
 
-        #endregion
+        #endregion ESP Widget
     }
 
     /// <summary>
     /// Caches runtime data between sessions.
     /// </summary>
-    public sealed class PersistentCache
-    {
+    public sealed class PersistentCache {
+
         [JsonInclude]
         [JsonPropertyName("L8rVqZ3")]
         public LowLevelCache LowLevel { get; private set; } = new();

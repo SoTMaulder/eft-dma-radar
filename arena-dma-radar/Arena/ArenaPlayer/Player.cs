@@ -19,64 +19,58 @@ using eft_dma_shared.Common.DMA;
 using System.Collections.Frozen;
 using System;
 
-namespace arena_dma_radar.Arena.ArenaPlayer
-{
+namespace arena_dma_radar.Arena.ArenaPlayer {
+
     /// <summary>
     /// Base class for Tarkov Players.
     /// Tarkov implements several distinct classes that implement a similar player interface.
     /// </summary>
-    public abstract class Player : IWorldEntity, IMapEntity, IMouseoverEntity, IESPEntity, IPlayer
-    {
-        #region Static Interfaces
-        public static implicit operator ulong(Player x) => x?.Base ?? 0x0;
-        private static readonly ConcurrentDictionary<ulong, Stopwatch> _rateLimit = new();
+    public abstract class Player : IWorldEntity, IMapEntity, IMouseoverEntity, IESPEntity, IPlayer {
 
+        #region Static Interfaces
+
+        public static implicit operator ulong(Player x) => x?.Base ?? 0x0;
+
+        private static readonly ConcurrentDictionary<ulong, Stopwatch> _rateLimit = new();
 
         /// <summary>
         /// Resets/Updates 'static' assets in preparation for a new game/raid instance.
         /// </summary>
-        public static void Reset()
-        {
+        public static void Reset() {
             _rateLimit.Clear();
-            lock (_focusedPlayers)
-            {
+            lock (_focusedPlayers) {
                 _focusedPlayers.Clear();
             }
         }
-        #endregion
+
+        #endregion Static Interfaces
 
         #region Allocation
+
         /// <summary>
         /// Allocates a player and takes into consideration any rate-limits.
         /// </summary>
         /// <param name="playerDict">Player Dictionary collection to add the newly allocated player to.</param>
         /// <param name="playerBase">Player base memory address.</param>
         /// <param name="initialPosition">Initial position to be set (Optional). Usually for reallocations.</param>
-        public static void Allocate(ConcurrentDictionary<ulong, Player> playerDict, ulong playerBase, Vector3? initialPosition = null)
-        {
+        public static void Allocate(ConcurrentDictionary<ulong, Player> playerDict, ulong playerBase, Vector3? initialPosition = null) {
             var sw = _rateLimit.AddOrUpdate(playerBase,
                 (key) => new(),
                 (key, oldValue) => oldValue);
             if (sw.IsRunning && sw.Elapsed.TotalMilliseconds < 500f)
                 return;
-            try
-            {
+            try {
                 var player = AllocateInternal(playerBase, initialPosition);
                 playerDict[player] = player;
                 LoneLogging.WriteLine($"Player '{player.Name}' allocated.");
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 LoneLogging.WriteLine($"ERROR during Player Allocation for player @ 0x{playerBase.ToString("X")}: {ex}");
-            }
-            finally
-            {
+            } finally {
                 sw.Restart();
             }
         }
 
-        private static Player AllocateInternal(ulong playerBase, Vector3? initialPosition)
-        {
+        private static Player AllocateInternal(ulong playerBase, Vector3? initialPosition) {
             var className = ObjectClass.ReadName(playerBase, 64);
             if (className != "ArenaObservedPlayerView")
                 throw new ArgumentOutOfRangeException(nameof(className));
@@ -86,44 +80,47 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// <summary>
         /// Player Constructor.
         /// </summary>
-        protected Player(ulong playerBase)
-        {
+        protected Player(ulong playerBase) {
             ArgumentOutOfRangeException.ThrowIfZero(playerBase, nameof(playerBase));
             Base = playerBase;
         }
 
-        #endregion
+        #endregion Allocation
 
         #region Fields / Properties
+
         /// <summary>
         /// Player Class Base Address
         /// </summary>
         public ulong Base { get; }
 
         private Config Config { get; set; } = Program.Config;
+
         /// <summary>
         /// True if the Player is Active (in the player list).
         /// </summary>
         public bool IsActive { get; private set; }
+
         /// <summary>
         /// Type of player unit.
         /// </summary>
         public PlayerType Type { get; protected set; }
+
         /// <summary>
         /// Twitch.tv channel status.
         /// </summary>
         public string TwitchChannelURL { get; private set; }
+
         /// <summary>
         /// Player's Rotation in Local Game World.
         /// </summary>
         public Vector2 Rotation { get; private set; }
+
         /// <summary>
         /// Player's Map Rotation (with 90 degree correction applied).
         /// </summary>
-        public float MapRotation
-        {
-            get
-            {
+        public float MapRotation {
+            get {
                 float mapRotation = Rotation.X; // Cache value
                 mapRotation -= 90f;
                 while (mapRotation < 0f)
@@ -132,134 +129,161 @@ namespace arena_dma_radar.Arena.ArenaPlayer
                 return mapRotation;
             }
         }
+
         /// <summary>
         /// Corpse field value.
         /// </summary>
         public ulong? Corpse { get; private set; }
+
         /// <summary>
         /// Stopwatch for High Alert ESP Feature.
         /// </summary>
         public Stopwatch HighAlertSw { get; } = new();
+
         /// <summary>
         /// Player's Skeleton Bones.
         /// </summary>
         public virtual Skeleton Skeleton => throw new NotImplementedException(nameof(Skeleton));
+
         /// <summary>
         /// Duration of consecutive errors.
         /// </summary>
         public Stopwatch ErrorTimer { get; } = new();
+
         /// <summary>
         /// True if player is 'Locked On' via Aimbot.
         /// </summary>
         public bool IsAimbotLocked { get; set; }
+
         /// <summary>
         /// True if Player is Focused (displays a different color on Radar/ESP).
         /// </summary>
         public bool IsFocused { get; protected set; }
 
-        #endregion
+        #endregion Fields / Properties
 
         #region Virtual Properties
+
         /// <summary>
         /// Player name.
         /// </summary>
         public virtual string Name { get; }
+
         /// <summary>
         /// Account UUID for Human Controlled Players.
         /// </summary>
         public virtual string AccountID { get; }
+
         /// <summary>
         /// Group that the player belongs to.
         /// </summary>
         public virtual int TeamID { get; } = -1;
+
         /// <summary>
         /// Player's Faction.
         /// </summary>
         public virtual Enums.EPlayerSide PlayerSide { get; }
+
         /// <summary>
         /// Player is Human-Controlled.
         /// </summary>
         public virtual bool IsHuman { get; }
+
         /// <summary>
         /// MovementContext / StateContext
         /// </summary>
         public virtual ulong MovementContext { get; }
+
         /// <summary>
         /// EFT.PlayerBody
         /// </summary>
         public virtual ulong Body { get; }
+
         /// <summary>
         /// Inventory Controller field address.
         /// </summary>
         public virtual ulong InventoryControllerAddr { get; }
+
         /// <summary>
         /// Hands Controller field address.
         /// </summary>
         public virtual ulong HandsControllerAddr { get; }
+
         /// <summary>
         /// Corpse field address..
         /// </summary>
         public virtual ulong CorpseAddr { get; }
+
         /// <summary>
         /// Player Rotation Field Address (view angles).
         /// </summary>
         public virtual ulong RotationAddress { get; }
-        #endregion
+
+        #endregion Virtual Properties
 
         #region Boolean Getters
+
         /// <summary>
         /// Player is a PMC Operator.
         /// </summary>
         public bool IsPmc => PlayerSide is Enums.EPlayerSide.Usec || PlayerSide is Enums.EPlayerSide.Bear;
+
         /// <summary>
         /// Player is alive (not dead).
         /// </summary>
         public bool IsAlive => Corpse is null;
+
         /// <summary>
         /// True if Player is Friendly to LocalPlayer.
         /// </summary>
         public bool IsFriendly =>
             this is LocalPlayer || Type is PlayerType.Teammate;
+
         /// <summary>
         /// True if player is Hostile to LocalPlayer.
         /// </summary>
         public bool IsHostile => !IsFriendly;
+
         /// <summary>
         /// True if player is TTV Streaming.
         /// </summary>
         public bool IsStreaming => TwitchChannelURL is not null;
+
         /// <summary>
         /// Player is hostile and alive/active.
         /// </summary>
         public bool IsHostileActive => IsHostile && IsActive && IsAlive;
+
         /// <summary>
         /// Player is human-controlled, hostile, and Active/Alive.
         /// </summary>
         public bool IsHumanActive => IsHuman && IsActive && IsAlive;
+
         /// <summary>
         /// Player is human-controlled & Hostile.
         /// </summary>
         public bool IsHumanHostile => IsHuman && IsHostile;
+
         /// <summary>
         /// Player is human-controlled, hostile, and Active/Alive.
         /// </summary>
         public bool IsHumanHostileActive => IsHumanHostile && IsActive && IsAlive;
+
         /// <summary>
         /// Player is friendly to LocalPlayer (including LocalPlayer) and Active/Alive.
         /// </summary>
         public bool HasExfild => !IsActive && IsAlive;
-        #endregion
+
+        #endregion Boolean Getters
 
         #region Methods
-
 
         /// <summary>
         /// Validates the Rotation Address.
         /// </summary>
         /// <param name="rotationAddr">Rotation va</param>
         /// <returns>Validated rotation virtual address.</returns>
-        protected static ulong ValidateRotationAddr(ulong rotationAddr)
-        {
+        protected static ulong ValidateRotationAddr(ulong rotationAddr) {
             var rotation = Memory.ReadValue<Vector2>(rotationAddr, false);
             if (!rotation.IsNormalOrZero() ||
                 Math.Abs(rotation.X) > 360f ||
@@ -275,19 +299,15 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// <param name="index"></param>
         /// <param name="registered"></param>
         /// <param name="isActiveParam"></param>
-        public virtual void OnRegRefresh(ScatterReadIndex index, IReadOnlySet<ulong> registered, bool? isActiveParam = null)
-        {
+        public virtual void OnRegRefresh(ScatterReadIndex index, IReadOnlySet<ulong> registered, bool? isActiveParam = null) {
             if (isActiveParam is not bool isActive)
                 isActive = registered.Contains(this);
-            if (isActive)
-            {
+            if (isActive) {
                 this.SetAlive();
-            }
-            else if (this.IsAlive) // Not in list, but alive
-            {
+            } else if (this.IsAlive) // Not in list, but alive
+              {
                 index.AddEntry<ulong>(0, this.CorpseAddr);
-                index.Callbacks += x1 =>
-                {
+                index.Callbacks += x1 => {
                     if (x1.TryGetResult<ulong>(0, out var corpsePtr) && corpsePtr != 0x0)
                         this.SetDead(corpsePtr);
                     else
@@ -300,8 +320,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// Mark player as inactive (not dead / not on map).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetInactive()
-        {
+        private void SetInactive() {
             Corpse = null;
             IsActive = false;
         }
@@ -310,8 +329,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// Mark player as dead.
         /// </summary>
         /// <param name="corpse">Corpse address.</param>
-        public void SetDead(ulong corpse)
-        {
+        public void SetDead(ulong corpse) {
             Corpse = corpse;
             IsActive = false;
         }
@@ -320,8 +338,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// Mark player as alive.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetAlive()
-        {
+        private void SetAlive() {
             Corpse = null;
             IsActive = true;
         }
@@ -330,43 +347,31 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// Executed on each Realtime Loop.
         /// </summary>
         /// <param name="index">Scatter read index dedicated to this player.</param>
-        public virtual void OnRealtimeLoop(ScatterReadIndex index)
-        {
+        public virtual void OnRealtimeLoop(ScatterReadIndex index) {
             index.AddEntry<Vector2>(-1, this.RotationAddress); // Rotation
-            foreach (var tr in Skeleton.Bones)
-            {
+            foreach (var tr in Skeleton.Bones) {
                 index.AddEntry<SharedArray<UnityTransform.TrsX>>((int)(uint)tr.Key, tr.Value.VerticesAddr,
                     (3 * tr.Value.Index + 3) * 16); // ESP Vertices
             }
-            index.Callbacks += x1 =>
-            {
+            index.Callbacks += x1 => {
                 bool p1 = false;
                 bool p2 = true;
                 if (x1.TryGetResult<Vector2>(-1, out var rotation))
                     p1 = this.SetRotation(ref rotation);
-                foreach (var tr in Skeleton.Bones)
-                {
-                    if (x1.TryGetResult<SharedArray<UnityTransform.TrsX>>((int)(uint)tr.Key, out var vertices))
-                    {
-                        try
-                        {
-                            try
-                            {
+                foreach (var tr in Skeleton.Bones) {
+                    if (x1.TryGetResult<SharedArray<UnityTransform.TrsX>>((int)(uint)tr.Key, out var vertices)) {
+                        try {
+                            try {
                                 _ = tr.Value.UpdatePosition(vertices);
-                            }
-                            catch (Exception ex) // Attempt to re-allocate Transform on error
-                            {
+                            } catch (Exception ex) // Attempt to re-allocate Transform on error
+                              {
                                 LoneLogging.WriteLine($"ERROR getting Player '{this.Name}' {tr.Key} Position: {ex}");
                                 this.Skeleton.ResetTransform(tr.Key);
                             }
-                        }
-                        catch
-                        {
+                        } catch {
                             p2 = false;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         p2 = false;
                     }
                 }
@@ -383,21 +388,16 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// </summary>
         /// <param name="round1">Index (round 1)</param>
         /// <param name="round2">Index (round 2)</param>
-        public void OnValidateTransforms(ScatterReadIndex round1, ScatterReadIndex round2)
-        {
-            foreach (var tr in Skeleton.Bones)
-            {
+        public void OnValidateTransforms(ScatterReadIndex round1, ScatterReadIndex round2) {
+            foreach (var tr in Skeleton.Bones) {
                 round1.AddEntry<MemPointer>((int)(uint)tr.Key,
                     tr.Value.TransformInternal +
                     UnityOffsets.TransformInternal.TransformAccess); // Bone Hierarchy
-                round1.Callbacks += x1 =>
-                {
+                round1.Callbacks += x1 => {
                     if (x1.TryGetResult<MemPointer>((int)(uint)tr.Key, out var tra))
                         round2.AddEntry<MemPointer>((int)(uint)tr.Key, tra + UnityOffsets.TransformAccess.Vertices); // Vertices Ptr
-                    round2.Callbacks += x2 =>
-                    {
-                        if (x2.TryGetResult<MemPointer>((int)(uint)tr.Key, out var verticesPtr))
-                        {
+                    round2.Callbacks += x2 => {
+                        if (x2.TryGetResult<MemPointer>((int)(uint)tr.Key, out var verticesPtr)) {
                             if (tr.Value.VerticesAddr != verticesPtr) // check if any addr changed
                             {
                                 LoneLogging.WriteLine(
@@ -414,10 +414,8 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// Set player rotation (Direction/Pitch)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected bool SetRotation(ref Vector2 rotation)
-        {
-            try
-            {
+        protected bool SetRotation(ref Vector2 rotation) {
+            try {
                 rotation.ThrowIfAbnormalAndNotZero();
                 rotation.X = rotation.X.NormalizeAngle();
                 ArgumentOutOfRangeException.ThrowIfLessThan(rotation.X, 0f);
@@ -426,9 +424,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
                 ArgumentOutOfRangeException.ThrowIfGreaterThan(rotation.Y, 90f);
                 Rotation = rotation;
                 return true;
-            }
-            catch
-            {
+            } catch {
                 return false;
             }
         }
@@ -438,19 +434,16 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// </summary>
         /// <param name="inventoryController">Player's Inventory Controller.</param>
         /// <returns>Team ID. -1 if not found.</returns>
-        protected static int GetTeamID(ulong inventoryController)
-        {
+        protected static int GetTeamID(ulong inventoryController) {
             var inventory = Memory.ReadPtr(inventoryController + Offsets.InventoryController.Inventory);
             var equipment = Memory.ReadPtr(inventory + Offsets.Inventory.Equipment);
             var slots = Memory.ReadPtr(equipment + Offsets.Equipment.Slots);
             using var slotsArray = MemArray<ulong>.Get(slots);
 
-            foreach (var slotPtr in slotsArray)
-            {
+            foreach (var slotPtr in slotsArray) {
                 var slotNamePtr = Memory.ReadPtr(slotPtr + Offsets.Slot.ID);
                 string name = Memory.ReadUnityString(slotNamePtr);
-                if (name == "ArmBand")
-                {
+                if (name == "ArmBand") {
                     var containedItem = Memory.ReadPtr(slotPtr + Offsets.Slot.ContainedItem);
                     var itemTemplate = Memory.ReadPtr(containedItem + Offsets.LootItem.Template);
                     var idPtr = Memory.ReadValue<Types.MongoID>(itemTemplate + Offsets.ItemTemplate._id);
@@ -477,6 +470,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
 
             return -1;
         }
+
         /// <summary>
         /// Refresh Gear if Active Human Player. TODO
         /// </summary>
@@ -515,9 +509,11 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// <returns>Array of offsets for transform internal chain.</returns>
         public virtual uint[] GetTransformInternalChain(Bones bone) =>
             throw new NotImplementedException();
-        #endregion
+
+        #endregion Methods
 
         #region Chams Feature
+
         /// <summary>
         /// 0 = None, otherwise value of enum ChamsMode
         /// </summary>
@@ -530,29 +526,22 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// <param name="game">Current gameworld instance.</param>
         /// <param name="chamsMode">Chams mode being applied.</param>
         /// <param name="chamsMaterial">Chams material instance ID to write.</param>
-        public void SetChams(ScatterWriteHandle writes, LocalGameWorld game, ChamsManager.ChamsMode chamsMode, int chamsMaterial)
-        {
-            try
-            {
-                if (ChamsMode != chamsMode)
-                {
+        public void SetChams(ScatterWriteHandle writes, LocalGameWorld game, ChamsManager.ChamsMode chamsMode, int chamsMaterial) {
+            try {
+                if (ChamsMode != chamsMode) {
                     writes.Clear();
                     ApplyClothingChams(writes, chamsMaterial);
-                    if (chamsMode is not ChamsManager.ChamsMode.Basic)
-                    {
+                    if (chamsMode is not ChamsManager.ChamsMode.Basic) {
                         ApplyGearChams(writes, chamsMaterial);
                     }
                     writes.Execute(DoWrite);
                     LoneLogging.WriteLine($"Chams set OK for Player '{Name}'");
                     ChamsMode = chamsMode;
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 LoneLogging.WriteLine($"ERROR setting Chams for Player '{Name}': {ex}");
             }
-            bool DoWrite()
-            {
+            bool DoWrite() {
                 if (Memory.ReadValue<ulong>(this.CorpseAddr, false) != 0)
                     return false;
                 if (!game.IsSafeToWriteMem)
@@ -566,19 +555,16 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// </summary>
         /// <param name="writes"></param>
         /// <param name="chamsMaterial"></param>
-        private void ApplyClothingChams(ScatterWriteHandle writes, int chamsMaterial)
-        {
+        private void ApplyClothingChams(ScatterWriteHandle writes, int chamsMaterial) {
             var pRendererContainersArray = Memory.ReadPtr(this.Body + Offsets.PlayerBody._bodyRenderers, false);
             using var rendererContainersArray = MemArray<Types.BodyRendererContainer>.Get(pRendererContainersArray, false);
             ArgumentOutOfRangeException.ThrowIfZero(rendererContainersArray.Count);
 
-            foreach (var rendererContainer in rendererContainersArray)
-            {
+            foreach (var rendererContainer in rendererContainersArray) {
                 using var renderersArray = MemArray<ulong>.Get(rendererContainer.Renderers, false);
                 ArgumentOutOfRangeException.ThrowIfZero(renderersArray.Count);
 
-                foreach (var skinnedMeshRenderer in renderersArray)
-                {
+                foreach (var skinnedMeshRenderer in renderersArray) {
                     // Cached ptr to Renderer
                     var renderer = Memory.ReadPtr(skinnedMeshRenderer + UnityOffsets.SkinnedMeshRenderer.Renderer, false);
                     WriteChamsMaterial(writes, renderer, chamsMaterial);
@@ -591,8 +577,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// </summary>
         /// <param name="writes"></param>
         /// <param name="chamsMaterial"></param>
-        private void ApplyGearChams(ScatterWriteHandle writes, int chamsMaterial)
-        {
+        private void ApplyGearChams(ScatterWriteHandle writes, int chamsMaterial) {
             var slotViews = Memory.ReadValue<ulong>(this.Body + Offsets.PlayerBody.SlotViews, false);
             if (!Utils.IsValidVirtualAddress(slotViews))
                 return;
@@ -605,8 +590,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
             if (slotViewsDict.Count == 0)
                 return;
 
-            foreach (var slot in slotViewsDict)
-            {
+            foreach (var slot in slotViewsDict) {
                 if (!Utils.IsValidVirtualAddress(slot.Value))
                     continue;
 
@@ -618,8 +602,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
                 if (dressesArray.Count == 0)
                     continue;
 
-                foreach (var dress in dressesArray)
-                {
+                foreach (var dress in dressesArray) {
                     if (!Utils.IsValidVirtualAddress(dress))
                         continue;
 
@@ -631,8 +614,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
                     if (renderersArray.Count == 0)
                         continue;
 
-                    foreach (var renderer in renderersArray)
-                    {
+                    foreach (var renderer in renderersArray) {
                         if (!Utils.IsValidVirtualAddress(renderer))
                             continue;
 
@@ -652,8 +634,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// <param name="writes"></param>
         /// <param name="renderer"></param>
         /// <param name="chamsMaterial"></param>
-        private static void WriteChamsMaterial(ScatterWriteHandle writes, ulong renderer, int chamsMaterial)
-        {
+        private static void WriteChamsMaterial(ScatterWriteHandle writes, ulong renderer, int chamsMaterial) {
             int materialsCount = Memory.ReadValue<int>(renderer + UnityOffsets.Renderer.Count, false);
             ArgumentOutOfRangeException.ThrowIfLessThan(materialsCount, 0, nameof(materialsCount));
             ArgumentOutOfRangeException.ThrowIfGreaterThan(materialsCount, 30, nameof(materialsCount));
@@ -664,23 +645,21 @@ namespace arena_dma_radar.Arena.ArenaPlayer
             writes.AddBufferEntry(materialsArrayPtr, materials.AsSpan());
         }
 
-        #endregion
+        #endregion Chams Feature
 
         #region Interfaces
+
         public Vector2 MouseoverPosition { get; set; }
         public ref Vector3 Position => ref this.Skeleton.Root.Position;
 
-        public void Draw(SKCanvas canvas, LoneMapParams mapParams, ILocalPlayer localPlayer)
-        {
-            try
-            {
+        public void Draw(SKCanvas canvas, LoneMapParams mapParams, ILocalPlayer localPlayer) {
+            try {
                 var point = this.Position.ToMapPos(mapParams.Map).ToZoomedPos(mapParams);
                 var showBomb = Config.ShowBomb;
                 this.MouseoverPosition = new(point.X, point.Y);
                 if (!this.IsAlive) // Player Dead -- Draw 'X' death marker and move on
                     DrawDeathMarker(canvas, point);
-                else
-                {
+                else {
                     DrawPlayerMarker(canvas, localPlayer, point);
                     if (this == localPlayer)
                         return;
@@ -700,22 +679,18 @@ namespace arena_dma_radar.Arena.ArenaPlayer
                             null : $" ({observed.HealthStatus.GetDescription()})"; // Only display abnormal health status
                         lines.Add($"{name}{health}");
                         lines.Add($"H: {(int)Math.Round(height)} D: {(int)Math.Round(dist)}");
-                    }
-                    else // just height, distance
-                    {
+                    } else // just height, distance
+                      {
                         lines.Add($"{(int)Math.Round(height)},{(int)Math.Round(dist)}");
                         if (this.ErrorTimer.ElapsedMilliseconds > 100)
                             lines[0] = "ERROR"; // In case POS stops updating, let us know!
                     }
-                    if (showBomb && this is ArenaObservedPlayer observed_)
-                    {
-                        if (Memory.Game.matchMode is Enums.ERaidMode.BlastGang)
-                        {
+                    if (showBomb && this is ArenaObservedPlayer observed_) {
+                        if (Memory.Game.matchMode is Enums.ERaidMode.BlastGang) {
                             GearManager a = new GearManager(observed_); // get live equipment
                             if (a.Equipment.TryGetValue("Backpack", out var _))
                                 lines.Add("(BOMB)");
-                            else
-                            {
+                            else {
                                 if (lines.Contains("(BOMB)"))
                                     lines.Remove("(BOMB)");
                             }
@@ -723,9 +698,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
                     }
                     DrawPlayerText(canvas, point, lines);
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 LoneLogging.WriteLine($"WARNING! Player Draw Error: {ex}");
             }
         }
@@ -733,8 +706,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// <summary>
         /// Draws a Player Marker on this location.
         /// </summary>
-        private void DrawPlayerMarker(SKCanvas canvas, IPlayer localPlayer, SKPoint point)
-        {
+        private void DrawPlayerMarker(SKCanvas canvas, IPlayer localPlayer, SKPoint point) {
             var radians = this.MapRotation.ToRadians();
             var paints = GetPaints();
             if (this != localPlayer && MainForm.MouseoverGroup is int grp && grp == this.TeamID)
@@ -754,37 +726,36 @@ namespace arena_dma_radar.Arena.ArenaPlayer
             canvas.DrawLine(point, aimlineEnd, SKPaints.ShapeOutline); // Draw outline
             canvas.DrawLine(point, aimlineEnd, paints.Item1); // draw LocalPlayer aimline
         }
+
         /// <summary>
         /// Draws a Death Marker on this location.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void DrawDeathMarker(SKCanvas canvas, SKPoint point)
-        {
+        private static void DrawDeathMarker(SKCanvas canvas, SKPoint point) {
             float length = 6 * MainForm.UIScale;
             canvas.DrawLine(new SKPoint(point.X - length, point.Y + length), new SKPoint(point.X + length, point.Y - length), SKPaints.PaintDeathMarker);
             canvas.DrawLine(new SKPoint(point.X - length, point.Y - length), new SKPoint(point.X + length, point.Y + length), SKPaints.PaintDeathMarker);
         }
+
         /// <summary>
         /// Gets the point where the Aimline 'Line' ends. Applies UI Scaling internally.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static SKPoint GetAimlineEndpoint(SKPoint start, float radians, float aimlineLength)
-        {
+        private static SKPoint GetAimlineEndpoint(SKPoint start, float radians, float aimlineLength) {
             aimlineLength *= MainForm.UIScale;
             return new SKPoint((float)(start.X + MathF.Cos(radians) * aimlineLength), (float)(start.Y + Math.Sin(radians) * aimlineLength));
         }
+
         /// <summary>
         /// Draws Player Text on this location.
         /// </summary>
-        private void DrawPlayerText(SKCanvas canvas, SKPoint point, List<string> lines)
-        {
+        private void DrawPlayerText(SKCanvas canvas, SKPoint point, List<string> lines) {
             var paints = GetPaints();
             if (MainForm.MouseoverGroup is int grp && grp == this.TeamID)
                 paints.Item2 = SKPaints.TextMouseoverGroup;
             float spacing = 3 * MainForm.UIScale;
             point.Offset(9 * MainForm.UIScale, spacing);
-            foreach (var line in lines)
-            {
+            foreach (var line in lines) {
                 if (string.IsNullOrEmpty(line?.Trim()))
                     continue;
 
@@ -793,60 +764,83 @@ namespace arena_dma_radar.Arena.ArenaPlayer
                 point.Offset(0, 12 * MainForm.UIScale);
             }
         }
-        private ValueTuple<SKPaint, SKPaint> GetPaints()
-        {
+
+        private ValueTuple<SKPaint, SKPaint> GetPaints() {
             if (this.IsAimbotLocked)
                 return new(SKPaints.PaintAimbotLocked, SKPaints.TextAimbotLocked);
             else if (this is LocalPlayer)
                 return new(SKPaints.PaintLocalPlayer, null);
             else if (this.IsFocused)
                 return new(SKPaints.PaintFocused, SKPaints.TextFocused);
-            switch (this.Type)
-            {
+
+            if (this.Type == PlayerType.Teammate && !string.IsNullOrEmpty(this.AccountID) && Program.Config.CustomTeammateColors.TryGetValue(this.AccountID, out string colorHex)) {
+                if (SKColor.TryParse(colorHex, out SKColor customColor)) {
+                    // Create new SKPaint objects for custom color to avoid modifying shared SKPaints instances
+                    var customPaint = new SKPaint {
+                        Color = customColor,
+                        StrokeWidth = SKPaints.PaintTeammate.StrokeWidth, // Use existing teammate stroke width
+                        Style = SKPaintStyle.Stroke,
+                        IsAntialias = true,
+                        FilterQuality = SKFilterQuality.High
+                    };
+                    var customTextPaint = new SKPaint {
+                        SubpixelText = true,
+                        Color = customColor,
+                        IsStroke = false,
+                        TextSize = SKPaints.TextTeammate.TextSize, // Use existing teammate text size
+                        TextEncoding = SKTextEncoding.Utf8,
+                        IsAntialias = true,
+                        Typeface = CustomFonts.SKFontFamilyRegular,
+                        FilterQuality = SKFilterQuality.High
+                    };
+                    return new(customPaint, customTextPaint);
+                }
+            }
+
+            switch (this.Type) {
                 case PlayerType.Teammate:
                     return new(SKPaints.PaintTeammate, SKPaints.TextTeammate);
+
                 case PlayerType.Player:
                     return new(SKPaints.PaintPlayer, SKPaints.TextPlayer);
+
                 case PlayerType.AI:
                     return new(SKPaints.PaintAI, SKPaints.TextAI);
+
                 case PlayerType.Streamer:
                     return new(SKPaints.PaintStreamer, SKPaints.TextStreamer);
+
                 default:
                     return new(SKPaints.PaintPlayer, SKPaints.TextPlayer);
             }
         }
-        public void DrawMouseover(SKCanvas canvas, LoneMapParams mapParams, LocalPlayer localPlayer)
-        {
+
+        public void DrawMouseover(SKCanvas canvas, LoneMapParams mapParams, LocalPlayer localPlayer) {
             List<string> lines = new();
-            string name = MainForm.Config.HideNames && this.IsHuman ? 
+            string name = MainForm.Config.HideNames && this.IsHuman ?
                 "<Hidden>" : this.Name;
             if (this.IsStreaming) // Streamer Notice
                 lines.Add("[LIVE TTV - Double Click]");
-            if (this is ArenaObservedPlayer observed)
-            {
+            if (this is ArenaObservedPlayer observed) {
                 string health = observed.HealthStatus is Enums.ETagStatus.Healthy ?
                     null : $" ({observed.HealthStatus.GetDescription()})"; // Only display abnormal health status
                 lines.Add($"{name}{health}");
-                if (observed.TeamID != -1)
-                {
+                if (observed.TeamID != -1) {
                     lines.Add($" T:{observed.TeamID} ");
                 }
                 var equipment = observed.Gear?.Equipment;
                 var hands = observed.Hands?.InHands;
                 lines.Add($"Use:{(hands is null ? "--" : hands)}");
-                if (equipment is not null)
-                {
+                if (equipment is not null) {
                     foreach (var item in equipment)
                         lines.Add($"{item.Key}: {item.Value}");
                 }
-            }
-            else 
+            } else
                 return;
             this.Position.ToMapPos(mapParams.Map).ToZoomedPos(mapParams).DrawMouseoverText(canvas, lines);
         }
 
-        public void DrawESP(SKCanvas canvas, LocalPlayer localPlayer)
-        {
+        public void DrawESP(SKCanvas canvas, LocalPlayer localPlayer) {
             if (this == localPlayer ||
                     !this.IsActive || !this.IsAlive)
                 return;
@@ -861,14 +855,12 @@ namespace arena_dma_radar.Arena.ArenaPlayer
 
             if (this.IsHostile && (ESP.Config.HighAlert && this.IsHuman)) // Check High Alert
             {
-                if (this.IsFacingTarget(localPlayer))
-                {
+                if (this.IsFacingTarget(localPlayer)) {
                     if (!this.HighAlertSw.IsRunning)
                         this.HighAlertSw.Start();
                     else if (this.HighAlertSw.Elapsed.TotalMilliseconds >= 500f) // Don't draw twice or more
                         HighAlert.DrawHighAlertESP(canvas, this);
-                }
-                else
+                } else
                     this.HighAlertSw.Reset();
             }
             if (!CameraManagerBase.WorldToScreen(ref Position, out var baseScrPos))
@@ -880,33 +872,27 @@ namespace arena_dma_radar.Arena.ArenaPlayer
                     return;
                 canvas.DrawPoints(SKPointMode.Lines, Skeleton.ESPBuffer, paint.Item1);
             }
-            if (drawLabel && this is ArenaObservedPlayer observed)
-            {
+            if (drawLabel && this is ArenaObservedPlayer observed) {
                 var lines = new List<string>();
-                if (showInfo)
-                {
+                if (showInfo) {
                     string health = observed.HealthStatus is Enums.ETagStatus.Healthy ?
                     null : $" ({observed.HealthStatus.GetDescription()})"; // Only display abnormal health status
                     lines.Add($"{observed.Name}{health}");
                 }
                 if (showWep)
                     lines.Add($"({observed.Hands?.InHands})");
-                if (showDist)
-                {
+                if (showDist) {
                     if (lines.Count == 0)
                         lines.Add($"{(int)dist}m");
                     else
                         lines[0] += $" ({(int)dist}m)";
                 }
-                if (showBomb)
-                {
-                    if (Memory.Game.matchMode is Enums.ERaidMode.BlastGang)
-                    {
+                if (showBomb) {
+                    if (Memory.Game.matchMode is Enums.ERaidMode.BlastGang) {
                         GearManager a = new GearManager(observed); // get live equipment
                         if (a.Equipment.TryGetValue("Backpack", out var _))
                             lines.Add("(BOMB)");
-                        else
-                        {
+                        else {
                             if (lines.Contains("(BOMB)"))
                                 lines.Remove("(BOMB)");
                         }
@@ -921,8 +907,7 @@ namespace arena_dma_radar.Arena.ArenaPlayer
                 var info = MemWriteFeature<Aimbot>.Instance.Cache;
                 if (info is not null &&
                     info.LastFireportPos is Vector3 fpPos &&
-                    info.LastPlayerPos is Vector3 playerPos)
-                {
+                    info.LastPlayerPos is Vector3 playerPos) {
                     if (!CameraManagerBase.WorldToScreen(ref fpPos, out var fpScreen))
                         return;
                     if (!CameraManagerBase.WorldToScreen(ref playerPos, out var playerScreen))
@@ -935,45 +920,73 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// <summary>
         /// Gets Aimview drawing paintbrush based on Player Type.
         /// </summary>
-        public ValueTuple<SKPaint, SKPaint> GetEspPlayerPaint()
-        {
+        public ValueTuple<SKPaint, SKPaint> GetEspPlayerPaint() {
             if (this.IsAimbotLocked)
                 return new(SKPaints.PaintAimbotLockedESP, SKPaints.TextAimbotLockedESP);
             else if (this.IsFocused)
                 return new(SKPaints.PaintFocusedESP, SKPaints.TextFocusedESP);
-            switch (this.Type)
-            {
+
+            if (this.Type == PlayerType.Teammate && !string.IsNullOrEmpty(this.AccountID) && Program.Config.CustomTeammateColors.TryGetValue(this.AccountID, out string colorHex)) {
+                if (SKColor.TryParse(colorHex, out SKColor customColor)) {
+                    // Create new SKPaint objects for custom color to avoid modifying shared SKPaints instances
+                    var customPaint = new SKPaint {
+                        Color = customColor,
+                        StrokeWidth = SKPaints.PaintTeammateESP.StrokeWidth, // Use existing teammate stroke width
+                        Style = SKPaintStyle.StrokeAndFill,
+                        IsAntialias = true,
+                        FilterQuality = SKFilterQuality.High
+                    };
+                    var customTextPaint = new SKPaint {
+                        SubpixelText = true,
+                        Color = customColor,
+                        IsStroke = false,
+                        TextSize = SKPaints.TextTeammateESP.TextSize, // Use existing teammate text size
+                        TextAlign = SKTextAlign.Center,
+                        TextEncoding = SKTextEncoding.Utf8,
+                        IsAntialias = true,
+                        Typeface = CustomFonts.SKFontFamilyMedium,
+                        FilterQuality = SKFilterQuality.High
+                    };
+                    return new(customPaint, customTextPaint);
+                }
+            }
+
+            switch (this.Type) {
                 case Player.PlayerType.Teammate:
                     return new(SKPaints.PaintTeammateESP, SKPaints.TextTeammateESP);
+
                 case Player.PlayerType.Player:
                     return new(SKPaints.PaintPlayerESP, SKPaints.TextPlayerESP);
+
                 case Player.PlayerType.AI:
                     return new(SKPaints.PaintAIESP, SKPaints.TextAIESP);
+
                 case Player.PlayerType.Streamer:
                     return new(SKPaints.PaintStreamerESP, SKPaints.TextStreamerESP);
+
                 default:
                     return new(SKPaints.PaintPlayerESP, SKPaints.TextPlayerESP);
             }
         }
-        #endregion
+
+        #endregion Interfaces
 
         #region Focused Players
+
         private static readonly HashSet<string> _focusedPlayers = new(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Toggles this player's focused status.
         /// Only applies to Human Controlled Players.
         /// </summary>
-        public void ToggleFocus()
-        {
+        public void ToggleFocus() {
             if (this is not ArenaObservedPlayer ||
                 !this.IsHumanActive)
                 return;
             string id = this.AccountID?.Trim();
             if (string.IsNullOrEmpty(id))
                 return;
-            lock (_focusedPlayers)
-            {
+            lock (_focusedPlayers) {
                 bool isFocused = _focusedPlayers.Contains(id);
                 if (isFocused)
                     _focusedPlayers.Remove(id);
@@ -987,45 +1000,48 @@ namespace arena_dma_radar.Arena.ArenaPlayer
         /// Check if this Player was focused prior (from a different round,etc.)
         /// </summary>
         /// <returns>True if focused, otherwise False.</returns>
-        protected bool CheckIfFocused()
-        {
+        protected bool CheckIfFocused() {
             string id = this.AccountID?.Trim();
             if (string.IsNullOrEmpty(id))
                 return false;
-            lock (_focusedPlayers)
-            {
+            lock (_focusedPlayers) {
                 return _focusedPlayers.Contains(id);
             }
         }
-        #endregion
+
+        #endregion Focused Players
 
         #region Types
 
         /// <summary>
         /// Defines Player Unit Type (Player,PMC,Scav,etc.)
         /// </summary>
-        public enum PlayerType
-        {
+        public enum PlayerType {
+
             /// <summary>
             /// Default value if a type cannot be established.
             /// </summary>
             [Description("Default")]
             Default,
+
             /// <summary>
             /// Teammate of LocalPlayer.
             /// </summary>
             [Description("Teammate")]
             Teammate,
+
             /// <summary>
             /// Bot/AI Player.
             /// </summary>
             [Description("AI")]
             AI,
+
             /// <summary>
             /// Human Controlled Player.
             /// </summary>
             [Description("Player")]
             Player,
+
             /// <summary>
             /// Human Controlled Hostile PMC/Scav that has a Twitch account name as their IGN.
             /// </summary>
@@ -1033,6 +1049,6 @@ namespace arena_dma_radar.Arena.ArenaPlayer
             Streamer
         }
 
-        #endregion
+        #endregion Types
     }
 }

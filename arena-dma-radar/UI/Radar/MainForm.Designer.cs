@@ -1,7 +1,5 @@
-﻿namespace arena_dma_radar.UI.Radar
-{
-    sealed partial class MainForm
-    {
+﻿namespace arena_dma_radar.UI.Radar {
+    sealed partial class MainForm {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -11,10 +9,8 @@
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -26,8 +22,7 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             components = new Container();
             ComponentResourceManager resources = new ComponentResourceManager(typeof(MainForm));
             colorDialog1 = new ColorDialog();
@@ -37,6 +32,7 @@
             flowLayoutPanel_RadarSettings = new FlowLayoutPanel();
             label2 = new Label();
             label8 = new Label();
+            linkLabel_CheckForUpdates = new LinkLabel();
             label1 = new Label();
             button_Restart = new Button();
             button_HotkeyManager = new Button();
@@ -50,6 +46,7 @@
             checkBox_Aimview = new CheckBox();
             checkBox_GrpConnect = new CheckBox();
             checkBox_HideNames = new CheckBox();
+            checkBox_RadarBomb = new CheckBox();
             flowLayoutPanel_MemWriteCheckbox = new FlowLayoutPanel();
             checkBox_EnableMemWrite = new CheckBox();
             flowLayoutPanel_MemWrites = new FlowLayoutPanel();
@@ -129,6 +126,21 @@
             trackBar_EspFontScale = new TrackBar();
             label_EspLineScale = new Label();
             trackBar_EspLineScale = new TrackBar();
+            flowLayoutPanel_CustomTeammateColors = new FlowLayoutPanel();
+            label_CustomTeammateColorsTitle = new Label();
+            label_AvailableTeammates = new Label();
+            listBox_AvailableTeammates = new ListBox();
+            label_ConfiguredTeammateColors = new Label();
+            listBox_CustomTeammateColors = new ListBox();
+            flowLayoutPanel_TeammateInputs = new FlowLayoutPanel();
+            label_CustomTeammateAccountId = new Label();
+            textBox_CustomTeammateAccountId = new TextBox();
+            label_CustomTeammateColorHex = new Label();
+            textBox_CustomTeammateColorHex = new TextBox();
+            button_CustomTeammateColorPicker = new Button();
+            flowLayoutPanel_TeammateActions = new FlowLayoutPanel();
+            button_AddUpdateCustomTeammateColor = new Button();
+            button_RemoveCustomTeammateColor = new Button();
             tabPage1 = new TabPage();
             checkBox_MapFree = new CheckBox();
             groupBox_MapSetup = new GroupBox();
@@ -141,8 +153,6 @@
             label_Pos = new Label();
             skglControl_Radar = new SKGLControl();
             tabControl1 = new TabControl();
-            checkBox_RadarBomb = new CheckBox();
-            linkLabel_CheckForUpdates = new LinkLabel();
             tabPage2.SuspendLayout();
             flowLayoutPanel_Settings.SuspendLayout();
             flowLayoutPanel_RadarSettings.SuspendLayout();
@@ -163,6 +173,9 @@
             flowLayoutPanel4.SuspendLayout();
             ((ISupportInitialize)trackBar_EspFontScale).BeginInit();
             ((ISupportInitialize)trackBar_EspLineScale).BeginInit();
+            flowLayoutPanel_CustomTeammateColors.SuspendLayout();
+            flowLayoutPanel_TeammateInputs.SuspendLayout();
+            flowLayoutPanel_TeammateActions.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox_MapSetup.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -176,6 +189,7 @@
             // 
             // tabPage2
             // 
+            tabPage2.BackColor = Color.FromArgb(30, 30, 30);
             tabPage2.Controls.Add(flowLayoutPanel_Settings);
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
@@ -183,7 +197,6 @@
             tabPage2.Size = new Size(1256, 653);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Settings";
-            tabPage2.UseVisualStyleBackColor = true;
             // 
             // flowLayoutPanel_Settings
             // 
@@ -193,6 +206,7 @@
             flowLayoutPanel_Settings.Controls.Add(flowLayoutPanel_MemWrites);
             flowLayoutPanel_Settings.Controls.Add(flowLayoutPanel_MonitorSettings);
             flowLayoutPanel_Settings.Controls.Add(flowLayoutPanel_ESPSettings);
+            flowLayoutPanel_Settings.Controls.Add(flowLayoutPanel_CustomTeammateColors);
             flowLayoutPanel_Settings.Dock = DockStyle.Fill;
             flowLayoutPanel_Settings.FlowDirection = FlowDirection.TopDown;
             flowLayoutPanel_Settings.Location = new Point(3, 3);
@@ -235,6 +249,7 @@
             label2.AutoSize = true;
             flowLayoutPanel_RadarSettings.SetFlowBreak(label2, true);
             label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.ForeColor = Color.GhostWhite;
             label2.Location = new Point(3, 0);
             label2.Name = "label2";
             label2.Size = new Size(179, 21);
@@ -249,9 +264,23 @@
             label8.TabIndex = 46;
             label8.Text = "label8";
             // 
+            // linkLabel_CheckForUpdates
+            // 
+            linkLabel_CheckForUpdates.AutoSize = true;
+            flowLayoutPanel_RadarSettings.SetFlowBreak(linkLabel_CheckForUpdates, true);
+            linkLabel_CheckForUpdates.Location = new Point(9, 27);
+            linkLabel_CheckForUpdates.Margin = new Padding(3, 6, 3, 6);
+            linkLabel_CheckForUpdates.Name = "linkLabel_CheckForUpdates";
+            linkLabel_CheckForUpdates.Size = new Size(255, 15);
+            linkLabel_CheckForUpdates.TabIndex = 47;
+            linkLabel_CheckForUpdates.TabStop = true;
+            linkLabel_CheckForUpdates.Text = "Check for updates at lone-eft.com/opensource";
+            linkLabel_CheckForUpdates.LinkClicked += linkLabel_CheckForUpdates_LinkClicked;
+            // 
             // label1
             // 
             label1.AutoSize = true;
+            label1.ForeColor = Color.GhostWhite;
             label1.Location = new Point(4, 48);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
@@ -262,7 +291,9 @@
             // 
             // button_Restart
             // 
+            button_Restart.FlatStyle = FlatStyle.Flat;
             button_Restart.Font = new Font("Segoe UI", 9.75F);
+            button_Restart.ForeColor = Color.GhostWhite;
             button_Restart.Location = new Point(180, 51);
             button_Restart.Name = "button_Restart";
             button_Restart.Size = new Size(107, 41);
@@ -273,6 +304,8 @@
             // 
             // button_HotkeyManager
             // 
+            button_HotkeyManager.FlatStyle = FlatStyle.Flat;
+            button_HotkeyManager.ForeColor = Color.GhostWhite;
             button_HotkeyManager.Location = new Point(293, 51);
             button_HotkeyManager.Name = "button_HotkeyManager";
             button_HotkeyManager.Size = new Size(107, 41);
@@ -283,6 +316,8 @@
             // 
             // button_Radar_ColorPicker
             // 
+            button_Radar_ColorPicker.FlatStyle = FlatStyle.Flat;
+            button_Radar_ColorPicker.ForeColor = Color.GhostWhite;
             button_Radar_ColorPicker.Location = new Point(406, 51);
             button_Radar_ColorPicker.Name = "button_Radar_ColorPicker";
             button_Radar_ColorPicker.Size = new Size(107, 41);
@@ -293,7 +328,9 @@
             // 
             // button_BackupConfig
             // 
+            button_BackupConfig.FlatStyle = FlatStyle.Flat;
             flowLayoutPanel_RadarSettings.SetFlowBreak(button_BackupConfig, true);
+            button_BackupConfig.ForeColor = Color.GhostWhite;
             button_BackupConfig.Location = new Point(519, 51);
             button_BackupConfig.Name = "button_BackupConfig";
             button_BackupConfig.Size = new Size(107, 41);
@@ -306,6 +343,7 @@
             // 
             label_AimlineLength.Anchor = AnchorStyles.Right;
             label_AimlineLength.AutoSize = true;
+            label_AimlineLength.ForeColor = Color.GhostWhite;
             label_AimlineLength.Location = new Point(4, 113);
             label_AimlineLength.Margin = new Padding(4, 0, 4, 0);
             label_AimlineLength.Name = "label_AimlineLength";
@@ -317,7 +355,7 @@
             // trackBar_AimlineLength
             // 
             trackBar_AimlineLength.Anchor = AnchorStyles.Right;
-            trackBar_AimlineLength.BackColor = SystemColors.Window;
+            trackBar_AimlineLength.BackColor = Color.FromArgb(30, 30, 30);
             trackBar_AimlineLength.LargeChange = 50;
             trackBar_AimlineLength.Location = new Point(100, 98);
             trackBar_AimlineLength.Margin = new Padding(4, 3, 4, 3);
@@ -334,6 +372,7 @@
             // 
             label_UIScale.Anchor = AnchorStyles.Right;
             label_UIScale.AutoSize = true;
+            label_UIScale.ForeColor = Color.GhostWhite;
             label_UIScale.Location = new Point(199, 113);
             label_UIScale.Name = "label_UIScale";
             label_UIScale.Size = new Size(72, 15);
@@ -344,7 +383,7 @@
             // trackBar_UIScale
             // 
             trackBar_UIScale.Anchor = AnchorStyles.Right;
-            trackBar_UIScale.BackColor = SystemColors.Window;
+            trackBar_UIScale.BackColor = Color.FromArgb(30, 30, 30);
             flowLayoutPanel_RadarSettings.SetFlowBreak(trackBar_UIScale, true);
             trackBar_UIScale.LargeChange = 10;
             trackBar_UIScale.Location = new Point(277, 98);
@@ -359,6 +398,7 @@
             // checkBox_MapSetup
             // 
             checkBox_MapSetup.AutoSize = true;
+            checkBox_MapSetup.ForeColor = Color.GhostWhite;
             checkBox_MapSetup.Location = new Point(3, 149);
             checkBox_MapSetup.Name = "checkBox_MapSetup";
             checkBox_MapSetup.Size = new Size(153, 19);
@@ -370,6 +410,7 @@
             // checkBox_Aimview
             // 
             checkBox_Aimview.AutoSize = true;
+            checkBox_Aimview.ForeColor = Color.GhostWhite;
             checkBox_Aimview.Location = new Point(162, 149);
             checkBox_Aimview.Name = "checkBox_Aimview";
             checkBox_Aimview.Size = new Size(86, 19);
@@ -381,6 +422,7 @@
             // checkBox_GrpConnect
             // 
             checkBox_GrpConnect.AutoSize = true;
+            checkBox_GrpConnect.ForeColor = Color.GhostWhite;
             checkBox_GrpConnect.Location = new Point(254, 149);
             checkBox_GrpConnect.Name = "checkBox_GrpConnect";
             checkBox_GrpConnect.Size = new Size(112, 19);
@@ -391,6 +433,7 @@
             // checkBox_HideNames
             // 
             checkBox_HideNames.AutoSize = true;
+            checkBox_HideNames.ForeColor = Color.GhostWhite;
             checkBox_HideNames.Location = new Point(372, 149);
             checkBox_HideNames.Name = "checkBox_HideNames";
             checkBox_HideNames.Size = new Size(91, 19);
@@ -398,6 +441,18 @@
             checkBox_HideNames.Text = "Hide Names";
             checkBox_HideNames.UseVisualStyleBackColor = true;
             checkBox_HideNames.CheckedChanged += checkBox_HideNames_CheckedChanged;
+            // 
+            // checkBox_RadarBomb
+            // 
+            checkBox_RadarBomb.AutoSize = true;
+            checkBox_RadarBomb.ForeColor = Color.GhostWhite;
+            checkBox_RadarBomb.Location = new Point(469, 149);
+            checkBox_RadarBomb.Name = "checkBox_RadarBomb";
+            checkBox_RadarBomb.Size = new Size(128, 19);
+            checkBox_RadarBomb.TabIndex = 47;
+            checkBox_RadarBomb.Text = "Show Bomb Carrier";
+            checkBox_RadarBomb.UseVisualStyleBackColor = true;
+            checkBox_RadarBomb.CheckedChanged += checkBox_RadarBomb_CheckedChanged;
             // 
             // flowLayoutPanel_MemWriteCheckbox
             // 
@@ -414,6 +469,7 @@
             // 
             checkBox_EnableMemWrite.AutoSize = true;
             checkBox_EnableMemWrite.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            checkBox_EnableMemWrite.ForeColor = Color.GhostWhite;
             checkBox_EnableMemWrite.Location = new Point(3, 3);
             checkBox_EnableMemWrite.Name = "checkBox_EnableMemWrite";
             checkBox_EnableMemWrite.Size = new Size(184, 19);
@@ -448,6 +504,7 @@
             label3.AutoSize = true;
             flowLayoutPanel_MemWrites.SetFlowBreak(label3, true);
             label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label3.ForeColor = Color.GhostWhite;
             label3.Location = new Point(3, 0);
             label3.Name = "label3";
             label3.Size = new Size(183, 21);
@@ -459,6 +516,7 @@
             checkBox_AdvancedMemWrites.AutoSize = true;
             flowLayoutPanel_MemWrites.SetFlowBreak(checkBox_AdvancedMemWrites, true);
             checkBox_AdvancedMemWrites.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            checkBox_AdvancedMemWrites.ForeColor = Color.GhostWhite;
             checkBox_AdvancedMemWrites.Location = new Point(3, 28);
             checkBox_AdvancedMemWrites.Name = "checkBox_AdvancedMemWrites";
             checkBox_AdvancedMemWrites.Size = new Size(246, 19);
@@ -469,6 +527,7 @@
             // checkBox_AimBotEnabled
             // 
             checkBox_AimBotEnabled.AutoSize = true;
+            checkBox_AimBotEnabled.ForeColor = Color.GhostWhite;
             checkBox_AimBotEnabled.Location = new Point(3, 53);
             checkBox_AimBotEnabled.Name = "checkBox_AimBotEnabled";
             checkBox_AimBotEnabled.Size = new Size(104, 19);
@@ -480,6 +539,7 @@
             // checkBox_NoRecoilSway
             // 
             checkBox_NoRecoilSway.AutoSize = true;
+            checkBox_NoRecoilSway.ForeColor = Color.GhostWhite;
             checkBox_NoRecoilSway.Location = new Point(113, 53);
             checkBox_NoRecoilSway.Name = "checkBox_NoRecoilSway";
             checkBox_NoRecoilSway.Size = new Size(147, 19);
@@ -491,6 +551,7 @@
             // checkBox_Chams
             // 
             checkBox_Chams.AutoSize = true;
+            checkBox_Chams.ForeColor = Color.GhostWhite;
             checkBox_Chams.Location = new Point(266, 53);
             checkBox_Chams.Name = "checkBox_Chams";
             checkBox_Chams.Size = new Size(63, 19);
@@ -502,6 +563,7 @@
             // checkBox_NoVisor
             // 
             checkBox_NoVisor.AutoSize = true;
+            checkBox_NoVisor.ForeColor = Color.GhostWhite;
             checkBox_NoVisor.Location = new Point(335, 53);
             checkBox_NoVisor.Name = "checkBox_NoVisor";
             checkBox_NoVisor.Size = new Size(71, 19);
@@ -514,6 +576,7 @@
             // 
             checkBox_NoWepMalf.AutoSize = true;
             flowLayoutPanel_MemWrites.SetFlowBreak(checkBox_NoWepMalf, true);
+            checkBox_NoWepMalf.ForeColor = Color.GhostWhite;
             checkBox_NoWepMalf.Location = new Point(412, 53);
             checkBox_NoWepMalf.Name = "checkBox_NoWepMalf";
             checkBox_NoWepMalf.Size = new Size(142, 19);
@@ -550,6 +613,7 @@
             label13.AutoSize = true;
             flowLayoutPanel_Aimbot.SetFlowBreak(label13, true);
             label13.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            label13.ForeColor = Color.GhostWhite;
             label13.Location = new Point(3, 0);
             label13.Name = "label13";
             label13.Size = new Size(113, 15);
@@ -568,6 +632,7 @@
             // 
             checkBox_SA_SafeLock.Anchor = AnchorStyles.Right;
             checkBox_SA_SafeLock.AutoSize = true;
+            checkBox_SA_SafeLock.ForeColor = Color.GhostWhite;
             checkBox_SA_SafeLock.Location = new Point(9, 31);
             checkBox_SA_SafeLock.Name = "checkBox_SA_SafeLock";
             checkBox_SA_SafeLock.Size = new Size(76, 19);
@@ -580,6 +645,7 @@
             // 
             checkBox_SA_AutoBone.Anchor = AnchorStyles.Right;
             checkBox_SA_AutoBone.AutoSize = true;
+            checkBox_SA_AutoBone.ForeColor = Color.GhostWhite;
             checkBox_SA_AutoBone.Location = new Point(91, 31);
             checkBox_SA_AutoBone.Name = "checkBox_SA_AutoBone";
             checkBox_SA_AutoBone.Size = new Size(82, 19);
@@ -593,6 +659,7 @@
             radioButton_AimTarget_FOV.Anchor = AnchorStyles.Right;
             radioButton_AimTarget_FOV.AutoSize = true;
             radioButton_AimTarget_FOV.Checked = true;
+            radioButton_AimTarget_FOV.ForeColor = Color.GhostWhite;
             radioButton_AimTarget_FOV.Location = new Point(179, 31);
             radioButton_AimTarget_FOV.Name = "radioButton_AimTarget_FOV";
             radioButton_AimTarget_FOV.Size = new Size(47, 19);
@@ -606,6 +673,7 @@
             // 
             radioButton_AimTarget_CQB.Anchor = AnchorStyles.Right;
             radioButton_AimTarget_CQB.AutoSize = true;
+            radioButton_AimTarget_CQB.ForeColor = Color.GhostWhite;
             radioButton_AimTarget_CQB.Location = new Point(232, 31);
             radioButton_AimTarget_CQB.Name = "radioButton_AimTarget_CQB";
             radioButton_AimTarget_CQB.Size = new Size(49, 19);
@@ -618,6 +686,7 @@
             // 
             label_AimFOV.Anchor = AnchorStyles.Right;
             label_AimFOV.AutoSize = true;
+            label_AimFOV.ForeColor = Color.GhostWhite;
             label_AimFOV.Location = new Point(287, 33);
             label_AimFOV.Name = "label_AimFOV";
             label_AimFOV.Size = new Size(44, 15);
@@ -627,7 +696,7 @@
             // trackBar_AimFOV
             // 
             trackBar_AimFOV.Anchor = AnchorStyles.Right;
-            trackBar_AimFOV.BackColor = SystemColors.Window;
+            trackBar_AimFOV.BackColor = Color.FromArgb(30, 30, 30);
             flowLayoutPanel_Aimbot.SetFlowBreak(trackBar_AimFOV, true);
             trackBar_AimFOV.Location = new Point(337, 18);
             trackBar_AimFOV.Maximum = 500;
@@ -642,9 +711,10 @@
             // 
             label10.Anchor = AnchorStyles.Right;
             label10.AutoSize = true;
+            label10.ForeColor = Color.GhostWhite;
             label10.Location = new Point(3, 75);
             label10.Name = "label10";
-            label10.Size = new Size(40, 15);
+            label10.Size = new Size(39, 15);
             label10.TabIndex = 51;
             label10.Text = "Target";
             // 
@@ -653,7 +723,7 @@
             comboBox_AimbotTarget.Anchor = AnchorStyles.Right;
             comboBox_AimbotTarget.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox_AimbotTarget.FormattingEnabled = true;
-            comboBox_AimbotTarget.Location = new Point(49, 71);
+            comboBox_AimbotTarget.Location = new Point(48, 71);
             comboBox_AimbotTarget.Name = "comboBox_AimbotTarget";
             comboBox_AimbotTarget.Size = new Size(121, 23);
             comboBox_AimbotTarget.TabIndex = 50;
@@ -662,7 +732,8 @@
             // 
             checkBox_AimRandomBone.Anchor = AnchorStyles.Right;
             checkBox_AimRandomBone.AutoSize = true;
-            checkBox_AimRandomBone.Location = new Point(176, 73);
+            checkBox_AimRandomBone.ForeColor = Color.GhostWhite;
+            checkBox_AimRandomBone.Location = new Point(175, 73);
             checkBox_AimRandomBone.Name = "checkBox_AimRandomBone";
             checkBox_AimRandomBone.Size = new Size(101, 19);
             checkBox_AimRandomBone.TabIndex = 68;
@@ -674,7 +745,9 @@
             // 
             button_RandomBoneCfg.Anchor = AnchorStyles.Right;
             button_RandomBoneCfg.Enabled = false;
-            button_RandomBoneCfg.Location = new Point(283, 69);
+            button_RandomBoneCfg.FlatStyle = FlatStyle.Flat;
+            button_RandomBoneCfg.ForeColor = Color.GhostWhite;
+            button_RandomBoneCfg.Location = new Point(282, 69);
             button_RandomBoneCfg.Name = "button_RandomBoneCfg";
             button_RandomBoneCfg.Size = new Size(57, 28);
             button_RandomBoneCfg.TabIndex = 69;
@@ -693,6 +766,7 @@
             flowLayoutPanel_NoRecoil.Controls.Add(label_Sway);
             flowLayoutPanel_NoRecoil.Controls.Add(trackBar_NoSway);
             flowLayoutPanel_NoRecoil.Enabled = false;
+            flowLayoutPanel_NoRecoil.ForeColor = Color.GhostWhite;
             flowLayoutPanel_NoRecoil.Location = new Point(429, 78);
             flowLayoutPanel_NoRecoil.Name = "flowLayoutPanel_NoRecoil";
             flowLayoutPanel_NoRecoil.Size = new Size(289, 68);
@@ -703,6 +777,7 @@
             label16.AutoSize = true;
             flowLayoutPanel_NoRecoil.SetFlowBreak(label16, true);
             label16.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label16.ForeColor = Color.GhostWhite;
             label16.Location = new Point(3, 0);
             label16.Name = "label16";
             label16.Size = new Size(58, 15);
@@ -713,6 +788,7 @@
             // 
             label_Recoil.Anchor = AnchorStyles.Right;
             label_Recoil.AutoSize = true;
+            label_Recoil.ForeColor = Color.GhostWhite;
             label_Recoil.Location = new Point(3, 33);
             label_Recoil.Name = "label_Recoil";
             label_Recoil.Size = new Size(54, 15);
@@ -722,7 +798,7 @@
             // trackBar_NoRecoil
             // 
             trackBar_NoRecoil.Anchor = AnchorStyles.Right;
-            trackBar_NoRecoil.BackColor = SystemColors.Window;
+            trackBar_NoRecoil.BackColor = Color.FromArgb(30, 30, 30);
             trackBar_NoRecoil.Location = new Point(63, 18);
             trackBar_NoRecoil.Maximum = 100;
             trackBar_NoRecoil.Name = "trackBar_NoRecoil";
@@ -735,6 +811,7 @@
             // 
             label_Sway.Anchor = AnchorStyles.Right;
             label_Sway.AutoSize = true;
+            label_Sway.ForeColor = Color.GhostWhite;
             label_Sway.Location = new Point(149, 33);
             label_Sway.Name = "label_Sway";
             label_Sway.Size = new Size(49, 15);
@@ -744,7 +821,7 @@
             // trackBar_NoSway
             // 
             trackBar_NoSway.Anchor = AnchorStyles.Right;
-            trackBar_NoSway.BackColor = SystemColors.Window;
+            trackBar_NoSway.BackColor = Color.FromArgb(30, 30, 30);
             trackBar_NoSway.Location = new Point(204, 18);
             trackBar_NoSway.Maximum = 100;
             trackBar_NoSway.Name = "trackBar_NoSway";
@@ -774,6 +851,7 @@
             label17.AutoSize = true;
             flowLayoutPanel_Chams.SetFlowBreak(label17, true);
             label17.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label17.ForeColor = Color.GhostWhite;
             label17.Location = new Point(3, 0);
             label17.Name = "label17";
             label17.Size = new Size(43, 15);
@@ -785,6 +863,7 @@
             radioButton_Chams_Basic.Anchor = AnchorStyles.Right;
             radioButton_Chams_Basic.AutoSize = true;
             radioButton_Chams_Basic.Checked = true;
+            radioButton_Chams_Basic.ForeColor = Color.GhostWhite;
             radioButton_Chams_Basic.Location = new Point(3, 56);
             radioButton_Chams_Basic.Name = "radioButton_Chams_Basic";
             radioButton_Chams_Basic.Size = new Size(52, 19);
@@ -799,6 +878,7 @@
             radioButton_Chams_Visible.Anchor = AnchorStyles.Right;
             radioButton_Chams_Visible.AutoSize = true;
             radioButton_Chams_Visible.Enabled = false;
+            radioButton_Chams_Visible.ForeColor = Color.GhostWhite;
             radioButton_Chams_Visible.Location = new Point(61, 56);
             radioButton_Chams_Visible.Name = "radioButton_Chams_Visible";
             radioButton_Chams_Visible.Size = new Size(59, 19);
@@ -812,6 +892,7 @@
             radioButton_Chams_Vischeck.Anchor = AnchorStyles.Right;
             radioButton_Chams_Vischeck.AutoSize = true;
             radioButton_Chams_Vischeck.Enabled = false;
+            radioButton_Chams_Vischeck.ForeColor = Color.GhostWhite;
             radioButton_Chams_Vischeck.Location = new Point(126, 56);
             radioButton_Chams_Vischeck.Name = "radioButton_Chams_Vischeck";
             radioButton_Chams_Vischeck.Size = new Size(71, 19);
@@ -844,6 +925,7 @@
             label14.AutoSize = true;
             flowLayoutPanel_Vischeck.SetFlowBreak(label14, true);
             label14.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label14.ForeColor = Color.GhostWhite;
             label14.Location = new Point(3, 0);
             label14.Name = "label14";
             label14.Size = new Size(145, 15);
@@ -854,6 +936,7 @@
             // 
             label15.Anchor = AnchorStyles.Right;
             label15.AutoSize = true;
+            label15.ForeColor = Color.GhostWhite;
             label15.Location = new Point(3, 22);
             label15.Name = "label15";
             label15.Size = new Size(73, 15);
@@ -872,7 +955,9 @@
             // 
             // button_VischeckVisColorPick
             // 
+            button_VischeckVisColorPick.FlatStyle = FlatStyle.Flat;
             flowLayoutPanel_Vischeck.SetFlowBreak(button_VischeckVisColorPick, true);
+            button_VischeckVisColorPick.ForeColor = Color.GhostWhite;
             button_VischeckVisColorPick.Location = new Point(160, 18);
             button_VischeckVisColorPick.Name = "button_VischeckVisColorPick";
             button_VischeckVisColorPick.Size = new Size(75, 23);
@@ -885,6 +970,7 @@
             // 
             label33.Anchor = AnchorStyles.Right;
             label33.AutoSize = true;
+            label33.ForeColor = Color.GhostWhite;
             label33.Location = new Point(3, 51);
             label33.Name = "label33";
             label33.Size = new Size(82, 15);
@@ -903,6 +989,8 @@
             // 
             // button_VischeckInvisColorPick
             // 
+            button_VischeckInvisColorPick.FlatStyle = FlatStyle.Flat;
+            button_VischeckInvisColorPick.ForeColor = Color.GhostWhite;
             button_VischeckInvisColorPick.Location = new Point(169, 47);
             button_VischeckInvisColorPick.Name = "button_VischeckInvisColorPick";
             button_VischeckInvisColorPick.Size = new Size(75, 23);
@@ -934,6 +1022,7 @@
             label11.AutoSize = true;
             flowLayoutPanel_MonitorSettings.SetFlowBreak(label11, true);
             label11.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label11.ForeColor = Color.GhostWhite;
             label11.Location = new Point(3, 0);
             label11.Name = "label11";
             label11.Size = new Size(206, 21);
@@ -944,6 +1033,7 @@
             // 
             label_Width.Anchor = AnchorStyles.Right;
             label_Width.AutoSize = true;
+            label_Width.ForeColor = Color.GhostWhite;
             label_Width.Location = new Point(3, 37);
             label_Width.Name = "label_Width";
             label_Width.Size = new Size(39, 15);
@@ -966,6 +1056,7 @@
             // 
             label_Height.Anchor = AnchorStyles.Right;
             label_Height.AutoSize = true;
+            label_Height.ForeColor = Color.GhostWhite;
             label_Height.Location = new Point(105, 37);
             label_Height.Name = "label_Height";
             label_Height.Size = new Size(43, 15);
@@ -986,6 +1077,8 @@
             // 
             // button_DetectRes
             // 
+            button_DetectRes.FlatStyle = FlatStyle.Flat;
+            button_DetectRes.ForeColor = Color.GhostWhite;
             button_DetectRes.Location = new Point(211, 24);
             button_DetectRes.Name = "button_DetectRes";
             button_DetectRes.Size = new Size(107, 41);
@@ -1029,6 +1122,7 @@
             label12.AutoSize = true;
             flowLayoutPanel_ESPSettings.SetFlowBreak(label12, true);
             label12.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label12.ForeColor = Color.GhostWhite;
             label12.Location = new Point(3, 0);
             label12.Name = "label12";
             label12.Size = new Size(79, 21);
@@ -1046,6 +1140,8 @@
             // button_StartESP
             // 
             button_StartESP.Anchor = AnchorStyles.Right;
+            button_StartESP.FlatStyle = FlatStyle.Flat;
+            button_StartESP.ForeColor = Color.GhostWhite;
             button_StartESP.Location = new Point(9, 24);
             button_StartESP.Name = "button_StartESP";
             button_StartESP.Size = new Size(107, 41);
@@ -1057,6 +1153,8 @@
             // button_EspColorPicker
             // 
             button_EspColorPicker.Anchor = AnchorStyles.Right;
+            button_EspColorPicker.FlatStyle = FlatStyle.Flat;
+            button_EspColorPicker.ForeColor = Color.GhostWhite;
             button_EspColorPicker.Location = new Point(122, 24);
             button_EspColorPicker.Name = "button_EspColorPicker";
             button_EspColorPicker.Size = new Size(107, 41);
@@ -1069,6 +1167,7 @@
             // 
             label_ESPFPSCap.Anchor = AnchorStyles.Right;
             label_ESPFPSCap.AutoSize = true;
+            label_ESPFPSCap.ForeColor = Color.GhostWhite;
             label_ESPFPSCap.Location = new Point(235, 37);
             label_ESPFPSCap.Name = "label_ESPFPSCap";
             label_ESPFPSCap.Size = new Size(50, 15);
@@ -1091,6 +1190,7 @@
             // 
             checkBox_ESP_AutoFS.Anchor = AnchorStyles.Right;
             checkBox_ESP_AutoFS.AutoSize = true;
+            checkBox_ESP_AutoFS.ForeColor = Color.GhostWhite;
             checkBox_ESP_AutoFS.Location = new Point(360, 35);
             checkBox_ESP_AutoFS.Name = "checkBox_ESP_AutoFS";
             checkBox_ESP_AutoFS.Size = new Size(108, 19);
@@ -1115,6 +1215,7 @@
             // checkBox_ESP_Grenades
             // 
             checkBox_ESP_Grenades.AutoSize = true;
+            checkBox_ESP_Grenades.ForeColor = Color.GhostWhite;
             checkBox_ESP_Grenades.Location = new Point(3, 71);
             checkBox_ESP_Grenades.Name = "checkBox_ESP_Grenades";
             checkBox_ESP_Grenades.Size = new Size(107, 19);
@@ -1126,6 +1227,7 @@
             // checkBox_ESP_ShowMag
             // 
             checkBox_ESP_ShowMag.AutoSize = true;
+            checkBox_ESP_ShowMag.ForeColor = Color.GhostWhite;
             checkBox_ESP_ShowMag.Location = new Point(116, 71);
             checkBox_ESP_ShowMag.Name = "checkBox_ESP_ShowMag";
             checkBox_ESP_ShowMag.Size = new Size(109, 19);
@@ -1137,6 +1239,7 @@
             // checkBox_ESP_HighAlert
             // 
             checkBox_ESP_HighAlert.AutoSize = true;
+            checkBox_ESP_HighAlert.ForeColor = Color.GhostWhite;
             checkBox_ESP_HighAlert.Location = new Point(231, 71);
             checkBox_ESP_HighAlert.Name = "checkBox_ESP_HighAlert";
             checkBox_ESP_HighAlert.Size = new Size(80, 19);
@@ -1148,6 +1251,7 @@
             // checkBox_ESP_FireportAim
             // 
             checkBox_ESP_FireportAim.AutoSize = true;
+            checkBox_ESP_FireportAim.ForeColor = Color.GhostWhite;
             checkBox_ESP_FireportAim.Location = new Point(317, 71);
             checkBox_ESP_FireportAim.Name = "checkBox_ESP_FireportAim";
             checkBox_ESP_FireportAim.Size = new Size(124, 19);
@@ -1159,6 +1263,7 @@
             // checkBox_ESP_AimFov
             // 
             checkBox_ESP_AimFov.AutoSize = true;
+            checkBox_ESP_AimFov.ForeColor = Color.GhostWhite;
             checkBox_ESP_AimFov.Location = new Point(447, 71);
             checkBox_ESP_AimFov.Name = "checkBox_ESP_AimFov";
             checkBox_ESP_AimFov.Size = new Size(105, 19);
@@ -1170,6 +1275,7 @@
             // checkBox_ESP_AimLock
             // 
             checkBox_ESP_AimLock.AutoSize = true;
+            checkBox_ESP_AimLock.ForeColor = Color.GhostWhite;
             checkBox_ESP_AimLock.Location = new Point(558, 71);
             checkBox_ESP_AimLock.Name = "checkBox_ESP_AimLock";
             checkBox_ESP_AimLock.Size = new Size(126, 19);
@@ -1181,6 +1287,7 @@
             // checkBox_ESP_StatusText
             // 
             checkBox_ESP_StatusText.AutoSize = true;
+            checkBox_ESP_StatusText.ForeColor = Color.GhostWhite;
             checkBox_ESP_StatusText.Location = new Point(690, 71);
             checkBox_ESP_StatusText.Name = "checkBox_ESP_StatusText";
             checkBox_ESP_StatusText.Size = new Size(114, 19);
@@ -1193,6 +1300,7 @@
             // 
             checkBox_ESP_FPS.AutoSize = true;
             flowLayoutPanel_ESPSettings.SetFlowBreak(checkBox_ESP_FPS, true);
+            checkBox_ESP_FPS.ForeColor = Color.GhostWhite;
             checkBox_ESP_FPS.Location = new Point(810, 71);
             checkBox_ESP_FPS.Name = "checkBox_ESP_FPS";
             checkBox_ESP_FPS.Size = new Size(86, 19);
@@ -1216,7 +1324,7 @@
             flowLayoutPanel_ESP_PlayerRender.Controls.Add(checkBox_Bomb);
             flowLayoutPanel_ESP_PlayerRender.Location = new Point(3, 96);
             flowLayoutPanel_ESP_PlayerRender.Name = "flowLayoutPanel_ESP_PlayerRender";
-            flowLayoutPanel_ESP_PlayerRender.Size = new Size(200, 77);
+            flowLayoutPanel_ESP_PlayerRender.Size = new Size(264, 77);
             flowLayoutPanel_ESP_PlayerRender.TabIndex = 5;
             // 
             // label18
@@ -1224,6 +1332,7 @@
             label18.AutoSize = true;
             flowLayoutPanel_ESP_PlayerRender.SetFlowBreak(label18, true);
             label18.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label18.ForeColor = Color.GhostWhite;
             label18.Location = new Point(3, 0);
             label18.Name = "label18";
             label18.Size = new Size(113, 15);
@@ -1233,6 +1342,7 @@
             // radioButton_ESPRender_None
             // 
             radioButton_ESPRender_None.AutoSize = true;
+            radioButton_ESPRender_None.ForeColor = Color.GhostWhite;
             radioButton_ESPRender_None.Location = new Point(3, 28);
             radioButton_ESPRender_None.Name = "radioButton_ESPRender_None";
             radioButton_ESPRender_None.Size = new Size(54, 19);
@@ -1246,6 +1356,7 @@
             radioButton_ESPRender_Bones.AutoSize = true;
             radioButton_ESPRender_Bones.Checked = true;
             flowLayoutPanel_ESP_PlayerRender.SetFlowBreak(radioButton_ESPRender_Bones, true);
+            radioButton_ESPRender_Bones.ForeColor = Color.GhostWhite;
             radioButton_ESPRender_Bones.Location = new Point(63, 28);
             radioButton_ESPRender_Bones.Name = "radioButton_ESPRender_Bones";
             radioButton_ESPRender_Bones.Size = new Size(57, 19);
@@ -1258,6 +1369,7 @@
             // checkBox_ESPRender_Labels
             // 
             checkBox_ESPRender_Labels.AutoSize = true;
+            checkBox_ESPRender_Labels.ForeColor = Color.GhostWhite;
             checkBox_ESPRender_Labels.Location = new Point(3, 53);
             checkBox_ESPRender_Labels.Name = "checkBox_ESPRender_Labels";
             checkBox_ESPRender_Labels.Size = new Size(59, 19);
@@ -1269,6 +1381,7 @@
             // checkBox_ESPRender_Weapons
             // 
             checkBox_ESPRender_Weapons.AutoSize = true;
+            checkBox_ESPRender_Weapons.ForeColor = Color.GhostWhite;
             checkBox_ESPRender_Weapons.Location = new Point(68, 53);
             checkBox_ESPRender_Weapons.Name = "checkBox_ESPRender_Weapons";
             checkBox_ESPRender_Weapons.Size = new Size(75, 19);
@@ -1280,6 +1393,7 @@
             // checkBox_ESPRender_Dist
             // 
             checkBox_ESPRender_Dist.AutoSize = true;
+            checkBox_ESPRender_Dist.ForeColor = Color.GhostWhite;
             checkBox_ESPRender_Dist.Location = new Point(149, 53);
             checkBox_ESPRender_Dist.Name = "checkBox_ESPRender_Dist";
             checkBox_ESPRender_Dist.Size = new Size(46, 19);
@@ -1287,8 +1401,11 @@
             checkBox_ESPRender_Dist.Text = "Dist";
             checkBox_ESPRender_Dist.UseVisualStyleBackColor = true;
             checkBox_ESPRender_Dist.CheckedChanged += checkBox_ESPRender_Dist_CheckedChanged;
-
+            // 
+            // checkBox_Bomb
+            // 
             checkBox_Bomb.AutoSize = true;
+            checkBox_Bomb.ForeColor = Color.GhostWhite;
             checkBox_Bomb.Location = new Point(201, 53);
             checkBox_Bomb.Name = "checkBox_Bomb";
             checkBox_Bomb.Size = new Size(58, 19);
@@ -1306,7 +1423,7 @@
             flowLayoutPanel4.Controls.Add(trackBar_EspFontScale);
             flowLayoutPanel4.Controls.Add(label_EspLineScale);
             flowLayoutPanel4.Controls.Add(trackBar_EspLineScale);
-            flowLayoutPanel4.Location = new Point(209, 109);
+            flowLayoutPanel4.Location = new Point(273, 109);
             flowLayoutPanel4.Name = "flowLayoutPanel4";
             flowLayoutPanel4.Size = new Size(346, 51);
             flowLayoutPanel4.TabIndex = 4;
@@ -1315,6 +1432,7 @@
             // 
             label_EspFontScale.Anchor = AnchorStyles.Right;
             label_EspFontScale.AutoSize = true;
+            label_EspFontScale.ForeColor = Color.GhostWhite;
             label_EspFontScale.Location = new Point(3, 18);
             label_EspFontScale.Name = "label_EspFontScale";
             label_EspFontScale.Size = new Size(85, 15);
@@ -1324,7 +1442,7 @@
             // trackBar_EspFontScale
             // 
             trackBar_EspFontScale.Anchor = AnchorStyles.Right;
-            trackBar_EspFontScale.BackColor = SystemColors.Window;
+            trackBar_EspFontScale.BackColor = Color.FromArgb(30, 30, 30);
             trackBar_EspFontScale.Location = new Point(94, 3);
             trackBar_EspFontScale.Maximum = 200;
             trackBar_EspFontScale.Minimum = 50;
@@ -1338,6 +1456,7 @@
             // 
             label_EspLineScale.Anchor = AnchorStyles.Right;
             label_EspLineScale.AutoSize = true;
+            label_EspLineScale.ForeColor = Color.GhostWhite;
             label_EspLineScale.Location = new Point(177, 18);
             label_EspLineScale.Name = "label_EspLineScale";
             label_EspLineScale.Size = new Size(83, 15);
@@ -1347,7 +1466,7 @@
             // trackBar_EspLineScale
             // 
             trackBar_EspLineScale.Anchor = AnchorStyles.Right;
-            trackBar_EspLineScale.BackColor = SystemColors.Window;
+            trackBar_EspLineScale.BackColor = Color.FromArgb(30, 30, 30);
             trackBar_EspLineScale.Location = new Point(266, 3);
             trackBar_EspLineScale.Maximum = 200;
             trackBar_EspLineScale.Minimum = 10;
@@ -1356,6 +1475,193 @@
             trackBar_EspLineScale.TabIndex = 44;
             trackBar_EspLineScale.TickStyle = TickStyle.None;
             trackBar_EspLineScale.Value = 100;
+            // 
+            // flowLayoutPanel_CustomTeammateColors
+            // 
+            flowLayoutPanel_CustomTeammateColors.AutoSize = true;
+            flowLayoutPanel_CustomTeammateColors.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            flowLayoutPanel_CustomTeammateColors.BorderStyle = BorderStyle.FixedSingle;
+            flowLayoutPanel_CustomTeammateColors.Controls.Add(label_CustomTeammateColorsTitle);
+            flowLayoutPanel_CustomTeammateColors.Controls.Add(label_AvailableTeammates);
+            flowLayoutPanel_CustomTeammateColors.Controls.Add(listBox_AvailableTeammates);
+            flowLayoutPanel_CustomTeammateColors.Controls.Add(label_ConfiguredTeammateColors);
+            flowLayoutPanel_CustomTeammateColors.Controls.Add(listBox_CustomTeammateColors);
+            flowLayoutPanel_CustomTeammateColors.Controls.Add(flowLayoutPanel_TeammateInputs);
+            flowLayoutPanel_CustomTeammateColors.Controls.Add(flowLayoutPanel_TeammateActions);
+            flowLayoutPanel_CustomTeammateColors.Dock = DockStyle.Top;
+            flowLayoutPanel_CustomTeammateColors.FlowDirection = FlowDirection.TopDown;
+            flowLayoutPanel_CustomTeammateColors.Location = new Point(3, 670);
+            flowLayoutPanel_CustomTeammateColors.Name = "flowLayoutPanel_CustomTeammateColors";
+            flowLayoutPanel_CustomTeammateColors.Padding = new Padding(5);
+            flowLayoutPanel_CustomTeammateColors.Size = new Size(1186, 285);
+            flowLayoutPanel_CustomTeammateColors.TabIndex = 4;
+            // 
+            // label_CustomTeammateColorsTitle
+            // 
+            label_CustomTeammateColorsTitle.AutoSize = true;
+            label_CustomTeammateColorsTitle.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            label_CustomTeammateColorsTitle.ForeColor = Color.GhostWhite;
+            label_CustomTeammateColorsTitle.Location = new Point(8, 5);
+            label_CustomTeammateColorsTitle.Name = "label_CustomTeammateColorsTitle";
+            label_CustomTeammateColorsTitle.Size = new Size(196, 21);
+            label_CustomTeammateColorsTitle.TabIndex = 0;
+            label_CustomTeammateColorsTitle.Text = "Custom Teammate Colors";
+            // 
+            // label_AvailableTeammates
+            // 
+            label_AvailableTeammates.AutoSize = true;
+            label_AvailableTeammates.ForeColor = Color.GhostWhite;
+            label_AvailableTeammates.Location = new Point(8, 31);
+            label_AvailableTeammates.Margin = new Padding(3, 5, 3, 0);
+            label_AvailableTeammates.Name = "label_AvailableTeammates";
+            label_AvailableTeammates.Size = new Size(173, 15);
+            label_AvailableTeammates.TabIndex = 9;
+            label_AvailableTeammates.Text = "Current Teammates (In-Match):";
+            // 
+            // listBox_AvailableTeammates
+            // 
+            listBox_AvailableTeammates.BackColor = Color.FromArgb(40, 40, 40);
+            listBox_AvailableTeammates.BorderStyle = BorderStyle.FixedSingle;
+            listBox_AvailableTeammates.ForeColor = Color.GhostWhite;
+            listBox_AvailableTeammates.FormattingEnabled = true;
+            listBox_AvailableTeammates.Location = new Point(8, 46);
+            listBox_AvailableTeammates.Margin = new Padding(3, 0, 3, 5);
+            listBox_AvailableTeammates.Name = "listBox_AvailableTeammates";
+            listBox_AvailableTeammates.Size = new Size(350, 62);
+            listBox_AvailableTeammates.TabIndex = 10;
+            listBox_AvailableTeammates.SelectedIndexChanged += listBox_AvailableTeammates_SelectedIndexChanged;
+            // 
+            // label_ConfiguredTeammateColors
+            // 
+            label_ConfiguredTeammateColors.AutoSize = true;
+            label_ConfiguredTeammateColors.ForeColor = Color.GhostWhite;
+            label_ConfiguredTeammateColors.Location = new Point(8, 118);
+            label_ConfiguredTeammateColors.Margin = new Padding(3, 5, 3, 0);
+            label_ConfiguredTeammateColors.Name = "label_ConfiguredTeammateColors";
+            label_ConfiguredTeammateColors.Size = new Size(152, 15);
+            label_ConfiguredTeammateColors.TabIndex = 11;
+            label_ConfiguredTeammateColors.Text = "Configured Custom Colors:";
+            // 
+            // listBox_CustomTeammateColors
+            // 
+            listBox_CustomTeammateColors.BackColor = Color.FromArgb(40, 40, 40);
+            listBox_CustomTeammateColors.ForeColor = Color.GhostWhite;
+            listBox_CustomTeammateColors.FormattingEnabled = true;
+            listBox_CustomTeammateColors.Location = new Point(8, 133);
+            listBox_CustomTeammateColors.Margin = new Padding(3, 0, 3, 5);
+            listBox_CustomTeammateColors.Name = "listBox_CustomTeammateColors";
+            listBox_CustomTeammateColors.Size = new Size(350, 64);
+            listBox_CustomTeammateColors.TabIndex = 1;
+            listBox_CustomTeammateColors.SelectedIndexChanged += listBox_CustomTeammateColors_SelectedIndexChanged;
+            // 
+            // flowLayoutPanel_TeammateInputs
+            // 
+            flowLayoutPanel_TeammateInputs.AutoSize = true;
+            flowLayoutPanel_TeammateInputs.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            flowLayoutPanel_TeammateInputs.Controls.Add(label_CustomTeammateAccountId);
+            flowLayoutPanel_TeammateInputs.Controls.Add(textBox_CustomTeammateAccountId);
+            flowLayoutPanel_TeammateInputs.Controls.Add(label_CustomTeammateColorHex);
+            flowLayoutPanel_TeammateInputs.Controls.Add(textBox_CustomTeammateColorHex);
+            flowLayoutPanel_TeammateInputs.Controls.Add(button_CustomTeammateColorPicker);
+            flowLayoutPanel_TeammateInputs.Location = new Point(8, 207);
+            flowLayoutPanel_TeammateInputs.Margin = new Padding(3, 5, 3, 5);
+            flowLayoutPanel_TeammateInputs.Name = "flowLayoutPanel_TeammateInputs";
+            flowLayoutPanel_TeammateInputs.Size = new Size(504, 29);
+            flowLayoutPanel_TeammateInputs.TabIndex = 2;
+            flowLayoutPanel_TeammateInputs.WrapContents = false;
+            // 
+            // label_CustomTeammateAccountId
+            // 
+            label_CustomTeammateAccountId.Anchor = AnchorStyles.Left;
+            label_CustomTeammateAccountId.AutoSize = true;
+            label_CustomTeammateAccountId.ForeColor = Color.GhostWhite;
+            label_CustomTeammateAccountId.Location = new Point(3, 7);
+            label_CustomTeammateAccountId.Name = "label_CustomTeammateAccountId";
+            label_CustomTeammateAccountId.Size = new Size(69, 15);
+            label_CustomTeammateAccountId.TabIndex = 0;
+            label_CustomTeammateAccountId.Text = "Account ID:";
+            label_CustomTeammateAccountId.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // textBox_CustomTeammateAccountId
+            // 
+            textBox_CustomTeammateAccountId.Anchor = AnchorStyles.Left;
+            textBox_CustomTeammateAccountId.Location = new Point(78, 3);
+            textBox_CustomTeammateAccountId.Name = "textBox_CustomTeammateAccountId";
+            textBox_CustomTeammateAccountId.ReadOnly = true;
+            textBox_CustomTeammateAccountId.Size = new Size(180, 23);
+            textBox_CustomTeammateAccountId.TabIndex = 1;
+            // 
+            // label_CustomTeammateColorHex
+            // 
+            label_CustomTeammateColorHex.Anchor = AnchorStyles.Left;
+            label_CustomTeammateColorHex.AutoSize = true;
+            label_CustomTeammateColorHex.ForeColor = Color.GhostWhite;
+            label_CustomTeammateColorHex.Location = new Point(271, 7);
+            label_CustomTeammateColorHex.Margin = new Padding(10, 0, 3, 0);
+            label_CustomTeammateColorHex.Name = "label_CustomTeammateColorHex";
+            label_CustomTeammateColorHex.Size = new Size(63, 15);
+            label_CustomTeammateColorHex.TabIndex = 2;
+            label_CustomTeammateColorHex.Text = "Color Hex:";
+            label_CustomTeammateColorHex.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // textBox_CustomTeammateColorHex
+            // 
+            textBox_CustomTeammateColorHex.Anchor = AnchorStyles.Left;
+            textBox_CustomTeammateColorHex.Location = new Point(340, 3);
+            textBox_CustomTeammateColorHex.MaxLength = 7;
+            textBox_CustomTeammateColorHex.Name = "textBox_CustomTeammateColorHex";
+            textBox_CustomTeammateColorHex.Size = new Size(80, 23);
+            textBox_CustomTeammateColorHex.TabIndex = 3;
+            // 
+            // button_CustomTeammateColorPicker
+            // 
+            button_CustomTeammateColorPicker.Anchor = AnchorStyles.Left;
+            button_CustomTeammateColorPicker.FlatStyle = FlatStyle.Flat;
+            button_CustomTeammateColorPicker.ForeColor = Color.GhostWhite;
+            button_CustomTeammateColorPicker.Location = new Point(426, 3);
+            button_CustomTeammateColorPicker.Name = "button_CustomTeammateColorPicker";
+            button_CustomTeammateColorPicker.Size = new Size(75, 23);
+            button_CustomTeammateColorPicker.TabIndex = 4;
+            button_CustomTeammateColorPicker.Text = "Pick...";
+            button_CustomTeammateColorPicker.UseVisualStyleBackColor = true;
+            button_CustomTeammateColorPicker.Click += button_CustomTeammateColorPicker_Click;
+            // 
+            // flowLayoutPanel_TeammateActions
+            // 
+            flowLayoutPanel_TeammateActions.AutoSize = true;
+            flowLayoutPanel_TeammateActions.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            flowLayoutPanel_TeammateActions.Controls.Add(button_AddUpdateCustomTeammateColor);
+            flowLayoutPanel_TeammateActions.Controls.Add(button_RemoveCustomTeammateColor);
+            flowLayoutPanel_TeammateActions.Location = new Point(8, 246);
+            flowLayoutPanel_TeammateActions.Margin = new Padding(3, 5, 3, 3);
+            flowLayoutPanel_TeammateActions.Name = "flowLayoutPanel_TeammateActions";
+            flowLayoutPanel_TeammateActions.Size = new Size(187, 29);
+            flowLayoutPanel_TeammateActions.TabIndex = 3;
+            flowLayoutPanel_TeammateActions.WrapContents = false;
+            // 
+            // button_AddUpdateCustomTeammateColor
+            // 
+            button_AddUpdateCustomTeammateColor.FlatStyle = FlatStyle.Flat;
+            button_AddUpdateCustomTeammateColor.ForeColor = Color.GhostWhite;
+            button_AddUpdateCustomTeammateColor.Location = new Point(3, 3);
+            button_AddUpdateCustomTeammateColor.Name = "button_AddUpdateCustomTeammateColor";
+            button_AddUpdateCustomTeammateColor.Size = new Size(100, 23);
+            button_AddUpdateCustomTeammateColor.TabIndex = 0;
+            button_AddUpdateCustomTeammateColor.Text = "Add/Update";
+            button_AddUpdateCustomTeammateColor.UseVisualStyleBackColor = true;
+            button_AddUpdateCustomTeammateColor.Click += button_AddUpdateCustomTeammateColor_Click;
+            // 
+            // button_RemoveCustomTeammateColor
+            // 
+            button_RemoveCustomTeammateColor.FlatStyle = FlatStyle.Flat;
+            button_RemoveCustomTeammateColor.ForeColor = Color.GhostWhite;
+            button_RemoveCustomTeammateColor.Location = new Point(109, 3);
+            button_RemoveCustomTeammateColor.Name = "button_RemoveCustomTeammateColor";
+            button_RemoveCustomTeammateColor.Size = new Size(75, 23);
+            button_RemoveCustomTeammateColor.TabIndex = 1;
+            button_RemoveCustomTeammateColor.Text = "Remove";
+            button_RemoveCustomTeammateColor.UseVisualStyleBackColor = true;
+            button_RemoveCustomTeammateColor.Click += button_RemoveCustomTeammateColor_Click;
             // 
             // tabPage1
             // 
@@ -1480,37 +1786,12 @@
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(1264, 681);
             tabControl1.TabIndex = 8;
-
-
-            checkBox_RadarBomb.AutoSize = true;
-            checkBox_RadarBomb.Location = new Point(469, 122);
-            checkBox_RadarBomb.Name = "checkBox_RadarBomb";
-            checkBox_RadarBomb.Size = new Size(128, 19);
-            checkBox_RadarBomb.TabIndex = 47;
-            checkBox_RadarBomb.Text = "Show Bomb Carrier";
-            checkBox_RadarBomb.UseVisualStyleBackColor = true;
-            checkBox_RadarBomb.CheckedChanged += checkBox_RadarBomb_CheckedChanged;
-
-
-
-            // 
-            // linkLabel_CheckForUpdates
-            // 
-            linkLabel_CheckForUpdates.AutoSize = true;
-            flowLayoutPanel_RadarSettings.SetFlowBreak(linkLabel_CheckForUpdates, true);
-            linkLabel_CheckForUpdates.Location = new Point(9, 27);
-            linkLabel_CheckForUpdates.Margin = new Padding(3, 6, 3, 6);
-            linkLabel_CheckForUpdates.Name = "linkLabel_CheckForUpdates";
-            linkLabel_CheckForUpdates.Size = new Size(255, 15);
-            linkLabel_CheckForUpdates.TabIndex = 47;
-            linkLabel_CheckForUpdates.TabStop = true;
-            linkLabel_CheckForUpdates.Text = "Check for updates at lone-eft.com/opensource";
-            linkLabel_CheckForUpdates.LinkClicked += linkLabel_CheckForUpdates_LinkClicked;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(30, 30, 30);
             ClientSize = new Size(1264, 681);
             Controls.Add(tabControl1);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -1549,6 +1830,11 @@
             flowLayoutPanel4.PerformLayout();
             ((ISupportInitialize)trackBar_EspFontScale).EndInit();
             ((ISupportInitialize)trackBar_EspLineScale).EndInit();
+            flowLayoutPanel_CustomTeammateColors.ResumeLayout(false);
+            flowLayoutPanel_CustomTeammateColors.PerformLayout();
+            flowLayoutPanel_TeammateInputs.ResumeLayout(false);
+            flowLayoutPanel_TeammateInputs.PerformLayout();
+            flowLayoutPanel_TeammateActions.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
             groupBox_MapSetup.ResumeLayout(false);
@@ -1671,6 +1957,21 @@
         private LinkLabel linkLabel_CheckForUpdates;
         private CheckBox checkBox_Bomb;
         private CheckBox checkBox_RadarBomb;
+        // New UI Elements for Custom Teammate Colors
+        private FlowLayoutPanel flowLayoutPanel_CustomTeammateColors;
+        private Label label_CustomTeammateColorsTitle;
+        private Label label_AvailableTeammates; // New
+        private ListBox listBox_AvailableTeammates; // New
+        private Label label_ConfiguredTeammateColors; // New
+        private ListBox listBox_CustomTeammateColors;
+        private FlowLayoutPanel flowLayoutPanel_TeammateInputs;
+        private Label label_CustomTeammateAccountId;
+        private TextBox textBox_CustomTeammateAccountId;
+        private Label label_CustomTeammateColorHex;
+        private TextBox textBox_CustomTeammateColorHex;
+        private Button button_CustomTeammateColorPicker;
+        private FlowLayoutPanel flowLayoutPanel_TeammateActions;
+        private Button button_AddUpdateCustomTeammateColor;
+        private Button button_RemoveCustomTeammateColor;
     }
 }
-

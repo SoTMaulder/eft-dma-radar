@@ -23,10 +23,16 @@ using eft_dma_shared.Common.Misc.Commercial;
 using eft_dma_shared.Common.Misc.Data;
 using System.Collections.Frozen;
 
-namespace arena_dma_radar.UI.Radar
-{
-    public sealed partial class MainForm : Form
-    {
+// Required for SKColor
+using SkiaSharp;
+
+// Required for MessageBox, etc.
+using System.Windows.Forms;
+
+namespace arena_dma_radar.UI.Radar {
+
+    public sealed partial class MainForm : Form {
+
         #region Fields/Properties/Constructor(s)
 
         private readonly Stopwatch _fpsSw = new();
@@ -103,10 +109,8 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Contains all 'mouse-overable' items.
         /// </summary>
-        private IEnumerable<IMouseoverEntity> MouseOverItems
-        {
-            get
-            {
+        private IEnumerable<IMouseoverEntity> MouseOverItems {
+            get {
                 var players = AllPlayers?
                                   .Where(x => x is not Arena.ArenaPlayer.LocalPlayer)
                               ?? Enumerable.Empty<Player>();
@@ -115,8 +119,7 @@ namespace arena_dma_radar.UI.Radar
             }
         }
 
-        public MainForm()
-        {
+        public MainForm() {
             InitializeComponent();
             this.DoubleBuffered = true;
             this.Size = Config.WindowSize;
@@ -126,17 +129,17 @@ namespace arena_dma_radar.UI.Radar
             SetControlTooltips();
             RadarColorOptions.LoadColors(Config);
             EspColorOptions.LoadColors(Config);
-            SetUiEventHandlers();
+            SetUiEventHandlers(); // Call this to set up event handlers
             LoadHotkeyManager();
             SetMemWriteFeatures();
             SetUiValues();
+            LoadCustomTeammateColorsToListBox();
             var interval = TimeSpan.FromMilliseconds(1000d / Config.RadarTargetFPS);
             _renderTimer = new(interval);
             Shown += MainForm_Shown;
         }
 
-        private async void MainForm_Shown(object sender, EventArgs e)
-        {
+        private async void MainForm_Shown(object sender, EventArgs e) {
             while (!this.IsHandleCreated)
                 await Task.Delay(25);
             Window = this;
@@ -151,38 +154,32 @@ namespace arena_dma_radar.UI.Radar
             _renderTimer.Elapsed += RenderTimer_Elapsed;
         }
 
-        #endregion
+        #endregion Fields/Properties/Constructor(s)
 
         #region Render Loop
 
         /// <summary>
         /// Purge SkiaSharp Resources.
         /// </summary>
-        public void PurgeSKResources()
-        {
-            this.Invoke(() =>
-            {
+        public void PurgeSKResources() {
+            this.Invoke(() => {
                 skglControl_Radar?.GRContext?.PurgeResources();
             });
         }
 
-        private void RenderTimer_Elapsed(object sender, EventArgs e)
-        {
-            this.Invoke(() =>
-            {
+        private void RenderTimer_Elapsed(object sender, EventArgs e) {
+            this.Invoke(() => {
                 skglControl_Radar.Invalidate();
             });
         }
 
-        private void Radar_PaintSurface(object sender, SKPaintGLSurfaceEventArgs e)
-        {
+        private void Radar_PaintSurface(object sender, SKPaintGLSurfaceEventArgs e) {
             var isStarting = Starting;
             var isReady = Ready; // cache bool
             var inMatch = InRaid; // cache bool
             var localPlayer = LocalPlayer; // cache ref to current player
             var canvas = e.Surface.Canvas; // get Canvas reference to draw on
-            try
-            {
+            try {
                 SetFPS(inMatch);
                 SetMapName();
                 /// Check for map switch
@@ -243,14 +240,11 @@ namespace arena_dma_radar.UI.Radar
                     {
                         var groupedPlayers = allPlayers?
                             .Where(x => x.IsHumanHostileActive && x.TeamID != -1);
-                        if (groupedPlayers is not null)
-                        {
+                        if (groupedPlayers is not null) {
                             var groups = groupedPlayers.Select(x => x.TeamID).ToHashSet();
-                            foreach (var grp in groups)
-                            {
+                            foreach (var grp in groups) {
                                 var grpMembers = groupedPlayers.Where(x => x.TeamID == grp);
-                                if (grpMembers is not null && grpMembers.Any())
-                                {
+                                if (grpMembers is not null && grpMembers.Any()) {
                                     var combinations = grpMembers
                                         .SelectMany(x => grpMembers, (x, y) =>
                                             Tuple.Create(
@@ -269,9 +263,8 @@ namespace arena_dma_radar.UI.Radar
                     // ESP Widget
                     if (checkBox_Aimview.Checked)
                         _espWidget?.Draw(canvas);
-                }
-                else // LocalPlayer is *not* in a Raid -> Display Reason
-                {
+                } else // LocalPlayer is *not* in a Raid -> Display Reason
+                  {
                     if (!isStarting)
                         GameNotRunningStatus(canvas);
                     else if (isStarting && !isReady)
@@ -282,9 +275,8 @@ namespace arena_dma_radar.UI.Radar
 
                 SetStatusText(canvas);
                 canvas.Flush(); // commit frame to GPU
-            }
-            catch (Exception ex) // Log rendering errors
-            {
+            } catch (Exception ex) // Log rendering errors
+              {
                 LoneLogging.WriteLine($"CRITICAL RENDER ERROR: {ex}");
             }
         }
@@ -292,10 +284,8 @@ namespace arena_dma_radar.UI.Radar
         private readonly Stopwatch _statusSw = Stopwatch.StartNew();
         private int _statusOrder = 1;
 
-        private void IncrementStatus()
-        {
-            if (_statusSw.Elapsed.TotalSeconds >= 1d)
-            {
+        private void IncrementStatus() {
+            if (_statusSw.Elapsed.TotalSeconds >= 1d) {
                 if (_statusOrder == 3)
                     _statusOrder = 1;
                 else
@@ -304,16 +294,15 @@ namespace arena_dma_radar.UI.Radar
             }
         }
 
-        private void GameNotRunningStatus(SKCanvas canvas)
-        {
+        private void GameNotRunningStatus(SKCanvas canvas) {
             const string notRunning = "Game Process Not Running!";
             float textWidth = SKPaints.TextRadarStatus.MeasureText(notRunning);
             canvas.DrawText(notRunning, (skglControl_Radar.Width / 2) - textWidth / 2f, skglControl_Radar.Height / 2,
                 SKPaints.TextRadarStatus);
             IncrementStatus();
         }
-        private void StartingUpStatus(SKCanvas canvas)
-        {
+
+        private void StartingUpStatus(SKCanvas canvas) {
             const string startingUp1 = "Starting Up.";
             const string startingUp2 = "Starting Up..";
             const string startingUp3 = "Starting Up...";
@@ -325,8 +314,8 @@ namespace arena_dma_radar.UI.Radar
                 SKPaints.TextRadarStatus);
             IncrementStatus();
         }
-        private void WaitingForMatchStatus(SKCanvas canvas)
-        {
+
+        private void WaitingForMatchStatus(SKCanvas canvas) {
             const string waitingFor1 = "Waiting for Match Start.";
             const string waitingFor2 = "Waiting for Match Start..";
             const string waitingFor3 = "Waiting for Match Start...";
@@ -339,25 +328,24 @@ namespace arena_dma_radar.UI.Radar
             IncrementStatus();
         }
 
-        #endregion
+        #endregion Render Loop
 
         #region Methods
+
         /// <summary>
         /// Set Dark Mode on startup.
         /// </summary>
         /// <param name="darkmode"></param>
-        private void SetDarkMode(ref DarkModeCS darkmode)
-        {
+        private void SetDarkMode(ref DarkModeCS darkmode) {
             darkmode = new DarkModeCS(this);
-            if (darkmode.IsDarkMode)
-            {
+            if (darkmode.IsDarkMode) {
                 SharedPaints.PaintBitmap.ColorFilter = SharedPaints.GetDarkModeColorFilter(0.7f);
                 SharedPaints.PaintBitmapAlpha.ColorFilter = SharedPaints.GetDarkModeColorFilter(0.7f);
             }
         }
 
-        private void SetUiEventHandlers()
-        {
+        private void SetUiEventHandlers() {
+            // Standard event handlers
             trackBar_UIScale.ValueChanged += TrackBar_UIScale_ValueChanged;
             trackBar_AimlineLength.ValueChanged += TrackBar_AimlineLength_ValueChanged;
             skglControl_Radar.MouseMove += MapCanvas_MouseMove;
@@ -369,13 +357,26 @@ namespace arena_dma_radar.UI.Radar
             trackBar_NoRecoil.ValueChanged += TrackBar_NoRecoil_ValueChanged;
             trackBar_NoSway.ValueChanged += TrackBar_NoSway_ValueChanged;
             trackBar_AimFOV.ValueChanged += TrackBar_AimFOV_ValueChanged;
+
+            // Event handlers for custom teammate color UI elements
+            // These are typically wired up by the designer in MainForm.Designer.cs.
+            // If they are also added here, it can lead to events firing multiple times.
+            // It's generally best to let the designer handle these.
+            // If you've manually added these in the designer (e.g. by double clicking the control),
+            // then you can remove the corresponding lines below.
+            // If you have NOT set them in the designer, these lines are necessary.
+
+            // Example: If button_CustomTeammateColorPicker_Click was generated by designer, remove this line:
+            // this.button_CustomTeammateColorPicker.Click += new System.EventHandler(this.button_CustomTeammateColorPicker_Click);
+
+            // For safety, assuming the designer handles these, the explicit subscriptions here are removed.
+            // If you find events are not firing, ensure they are connected in the designer's event properties for each control.
         }
 
         /// <summary>
         /// Sets Mouseover Tooltips for Winforms Controls.
         /// </summary>
-        private void SetControlTooltips()
-        {
+        private void SetControlTooltips() {
             toolTip1.SetToolTip(textBox_VischeckVisColor, "Set the VISIBLE color of the Vischeck Chams. Must be set before chams are injected.");
             toolTip1.SetToolTip(textBox_VischeckInvisColor, "Set the INVISIBLE color of the Vischeck Chams. Must be set before chams are injected.");
             toolTip1.SetToolTip(button_VischeckVisColorPick, "Set the VISIBLE color of the Vischeck Chams. Must be set before chams are injected.");
@@ -486,10 +487,8 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Setup Widgets after GL Context is fully setup and window loaded to proper size.
         /// </summary>
-        private void SetupWidgets()
-        {
-            if (Config.Widgets.ESPWidgetLocation == default)
-            {
+        private void SetupWidgets() {
+            if (Config.Widgets.ESPWidgetLocation == default) {
                 var cr = skglControl_Radar.ClientRectangle;
                 Config.Widgets.ESPWidgetLocation = new SKRect(cr.Left, cr.Bottom - 200, cr.Left + 200, cr.Bottom);
             }
@@ -501,8 +500,7 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Load previously set GUI Config values. Run at startup.
         /// </summary>
-        private void SetUiValues()
-        {
+        private void SetUiValues() {
             trackBar_AimlineLength.Value = Config.AimLineLength;
             checkBox_Aimview.Checked = Config.ShowESPWidget;
             checkBox_Bomb.Checked = Config.ESP.ShowBomb;
@@ -522,8 +520,7 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Zooms the bitmap 'in'.
         /// </summary>
-        private void ZoomIn(int amt)
-        {
+        private void ZoomIn(int amt) {
             if (_zoom - amt >= 1) _zoom -= amt;
             else _zoom = 1;
             Config.LastZoom = _zoom;
@@ -532,19 +529,16 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Zooms the bitmap 'out'.
         /// </summary>
-        private void ZoomOut(int amt)
-        {
+        private void ZoomOut(int amt) {
             if (_zoom + amt <= 200) _zoom += amt;
             else _zoom = 200;
             Config.LastZoom = _zoom;
         }
 
-
         /// <summary>
         /// Set the Map Name on Radar Tab.
         /// </summary>
-        private void SetMapName()
-        {
+        private void SetMapName() {
             var map = LoneMapManager.Map?.Config?.Name;
             var name = map is null ? "Radar" : $"Radar ({map})";
             if (tabPage1.Text != name)
@@ -554,36 +548,28 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Set the FPS Counter.
         /// </summary>
-        private void SetFPS(bool inRaid)
-        {
-            if (_fpsSw.ElapsedMilliseconds >= 1000)
-            {
+        private void SetFPS(bool inRaid) {
+            if (_fpsSw.ElapsedMilliseconds >= 1000) {
                 var fps = Interlocked.Exchange(ref _fps, 0); // Get FPS -> Reset FPS counter
                 var title = Program.Name;
                 if (inRaid) title += $" ({fps} fps)";
                 Text = title;
                 _fpsSw.Restart();
-            }
-            else
-            {
+            } else {
                 _fps++; // Increment FPS counter
             }
         }
 
-        private void ToggleFullscreen(bool toFullscreen)
-        {
+        private void ToggleFullscreen(bool toFullscreen) {
             var screen = Screen.FromControl(this);
 
-            if (toFullscreen)
-            {
+            if (toFullscreen) {
                 WindowState = FormWindowState.Normal;
                 FormBorderStyle = FormBorderStyle.None;
                 Location = new Point(screen.Bounds.Left, screen.Bounds.Top);
                 Width = screen.Bounds.Width;
                 Height = screen.Bounds.Height;
-            }
-            else
-            {
+            } else {
                 FormBorderStyle = FormBorderStyle.Sizable;
                 WindowState = FormWindowState.Normal;
                 Width = 1280;
@@ -592,8 +578,7 @@ namespace arena_dma_radar.UI.Radar
             }
         }
 
-        private void SetMemWriteFeatures()
-        {
+        private void SetMemWriteFeatures() {
             /// Setup Memwrites
             checkBox_EnableMemWrite.Checked = MemWrites.Enabled;
             flowLayoutPanel_MemWrites.Enabled = MemWrites.Enabled;
@@ -625,24 +610,24 @@ namespace arena_dma_radar.UI.Radar
             checkBox_SA_SafeLock.Checked = Aimbot.Config.SilentAim.SafeLock;
             checkBox_AimRandomBone.Checked = Aimbot.Config.RandomBone.Enabled;
 
-
-            switch (Aimbot.Config.TargetingMode)
-            {
+            switch (Aimbot.Config.TargetingMode) {
                 case Aimbot.AimbotTargetingMode.FOV:
                     radioButton_AimTarget_FOV.Checked = true;
                     break;
+
                 case Aimbot.AimbotTargetingMode.CQB:
                     radioButton_AimTarget_CQB.Checked = true;
                     break;
             }
-            switch (Chams.Config.Mode)
-            {
+            switch (Chams.Config.Mode) {
                 case ChamsManager.ChamsMode.Basic:
                     radioButton_Chams_Basic.Checked = true;
                     break;
+
                 case ChamsManager.ChamsMode.VisCheckGlow:
                     radioButton_Chams_Vischeck.Checked = true;
                     break;
+
                 case ChamsManager.ChamsMode.Visible:
                     radioButton_Chams_Visible.Checked = true;
                     break;
@@ -652,8 +637,7 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Toggles the currently selected Aimbot Bone.
         /// </summary>
-        private void ToggleAimbotBone()
-        {
+        private void ToggleAimbotBone() {
             var maxIndex = comboBox_AimbotTarget.Items.Count - 1;
             var newIndex = comboBox_AimbotTarget.SelectedIndex + 1;
             if (newIndex > maxIndex)
@@ -665,8 +649,7 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Toggles the currently selected Aimbot Mode.
         /// </summary>
-        private void ToggleAimbotMode()
-        {
+        private void ToggleAimbotMode() {
             if (radioButton_AimTarget_FOV.Checked)
                 radioButton_AimTarget_CQB.Checked = true;
             else if (radioButton_AimTarget_CQB.Checked)
@@ -677,69 +660,57 @@ namespace arena_dma_radar.UI.Radar
         /// Set status text in top center of screen.
         /// </summary>
         /// <param name="canvas"></param>
-        private void SetStatusText(SKCanvas canvas)
-        {
-            try
-            {
+        private void SetStatusText(SKCanvas canvas) {
+            try {
                 var aimEnabled = checkBox_AimBotEnabled.Enabled && checkBox_AimBotEnabled.Checked;
                 string label;
-                if (aimEnabled)
-                {
+                if (aimEnabled) {
                     var mode = Aimbot.Config.TargetingMode;
                     if (Aimbot.Config.RandomBone.Enabled)
                         label = $"{mode.GetDescription()}: Random Bone";
                     else if (Aimbot.Config.SilentAim.AutoBone)
                         label = $"{mode.GetDescription()}: Auto Bone";
-                    else
-                    {
+                    else {
                         var bone = (BonesListItem)comboBox_AimbotTarget.SelectedItem;
                         label = $"{mode.GetDescription()}: {bone!.Name}";
                     }
-                }
-                else if (MemWriteFeature<NoRecoil>.Instance.Enabled)
+                } else if (MemWriteFeature<NoRecoil>.Instance.Enabled)
                     label = "No Recoil";
                 else
                     return;
                 var clientArea = skglControl_Radar.ClientRectangle;
                 var spacing = 1f * UIScale;
                 canvas.DrawStatusText(clientArea, SKPaints.TextStatusSmall, spacing, label);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 LoneLogging.WriteLine($"ERROR Setting Status Text: {ex}");
             }
         }
 
-        #endregion
+        #endregion Methods
 
         #region Events
-        private void textBox_VischeckVisColor_TextChanged(object sender, EventArgs e)
-        {
+
+        private void textBox_VischeckVisColor_TextChanged(object sender, EventArgs e) {
             Chams.Config.VisibleColor = textBox_VischeckVisColor.Text;
         }
 
-        private void textBox_VischeckInvisColor_TextChanged(object sender, EventArgs e)
-        {
+        private void textBox_VischeckInvisColor_TextChanged(object sender, EventArgs e) {
             Chams.Config.InvisibleColor = textBox_VischeckInvisColor.Text;
         }
 
-        private void button_VischeckVisColorPick_Click(object sender, EventArgs e)
-        {
-            if (colorDialog1.ShowDialog() is DialogResult.OK)
-            {
+        private void button_VischeckVisColorPick_Click(object sender, EventArgs e) {
+            if (colorDialog1.ShowDialog() is DialogResult.OK) {
                 textBox_VischeckVisColor.Text = colorDialog1.Color.ToSKColor().ToString();
             }
         }
 
-        private void button_VischeckInvisColorPick_Click(object sender, EventArgs e)
-        {
-            if (colorDialog1.ShowDialog() is DialogResult.OK)
-            {
+        private void button_VischeckInvisColorPick_Click(object sender, EventArgs e) {
+            if (colorDialog1.ShowDialog() is DialogResult.OK) {
                 textBox_VischeckInvisColor.Text = colorDialog1.Color.ToSKColor().ToString();
             }
         }
-        private void checkBox_AdvancedMemWrites_CheckedChanged(object sender, EventArgs e)
-        {
+
+        private void checkBox_AdvancedMemWrites_CheckedChanged(object sender, EventArgs e) {
             bool enabled = checkBox_AdvancedMemWrites.Checked;
             ToggleAdvMemwriteFeatures(enabled);
             if (enabled) // Enable Memory Writing
@@ -748,85 +719,74 @@ namespace arena_dma_radar.UI.Radar
                     "Are you sure you want to enable Advanced Memory Writing? This uses a riskier injection technique than regular Mem Write Features.",
                     "Enable Advanced Mem Writes?",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (dlg is DialogResult.Yes)
-                {
+                if (dlg is DialogResult.Yes) {
                     MemWrites.Config.AdvancedMemWrites = enabled;
-                }
-                else
+                } else
                     checkBox_AdvancedMemWrites.Checked = false;
-            }
-            else // Disable Memory Writing
-            {
+            } else // Disable Memory Writing
+              {
                 MemWrites.Config.AdvancedMemWrites = false;
             }
         }
 
-        private void ToggleAdvMemwriteFeatures(bool enabled)
-        {
+        private void ToggleAdvMemwriteFeatures(bool enabled) {
             radioButton_Chams_Vischeck.Enabled = enabled;
             radioButton_Chams_Visible.Enabled = enabled;
         }
-        private void checkBox_ESP_FireportAim_CheckedChanged(object sender, EventArgs e)
-        {
+
+        private void checkBox_ESP_FireportAim_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.ShowFireportAim = checkBox_ESP_FireportAim.Checked;
         }
 
-        private void checkBox_AimRandomBone_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_AimRandomBone_CheckedChanged(object sender, EventArgs e) {
             bool enabled = checkBox_AimRandomBone.Checked;
             Aimbot.Config.RandomBone.Enabled = enabled;
             button_RandomBoneCfg.Enabled = enabled;
             comboBox_AimbotTarget.Enabled = !enabled;
         }
 
-        private void button_RandomBoneCfg_Click(object sender, EventArgs e)
-        {
+        private void button_RandomBoneCfg_Click(object sender, EventArgs e) {
             using var form = new AimbotRandomBoneForm();
             var dlg = form.ShowDialog();
             if (!Aimbot.Config.RandomBone.Is100Percent)
                 Aimbot.Config.RandomBone.ResetDefaults();
         }
+
         /// <summary>
         /// Handles mouse clicks on the Map Canvas.
         /// </summary>
-        private void MapCanvas_MouseClick(object sender, MouseEventArgs e)
-        {
+        private void MapCanvas_MouseClick(object sender, MouseEventArgs e) {
             if (e.Button is MouseButtons.Right &&
                 _mouseOverItem is Player player &&
                 player.IsHumanActive)
                 player.ToggleFocus();
         }
-        private void checkBox_SA_AutoBone_CheckedChanged(object sender, EventArgs e)
-        {
+
+        private void checkBox_SA_AutoBone_CheckedChanged(object sender, EventArgs e) {
             Aimbot.Config.SilentAim.AutoBone = checkBox_SA_AutoBone.Checked;
         }
 
-        private void checkBox_SA_SafeLock_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_SA_SafeLock_CheckedChanged(object sender, EventArgs e) {
             Aimbot.Config.SilentAim.SafeLock = checkBox_SA_SafeLock.Checked;
         }
-        private void TrackBar_AimlineLength_ValueChanged(object sender, EventArgs e)
-        {
+
+        private void TrackBar_AimlineLength_ValueChanged(object sender, EventArgs e) {
             Config.AimLineLength = trackBar_AimlineLength.Value;
         }
 
-        private void checkBox_GrpConnect_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_GrpConnect_CheckedChanged(object sender, EventArgs e) {
             Config.ConnectGroups = checkBox_GrpConnect.Checked;
         }
 
-        private void checkBox_HideNames_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_HideNames_CheckedChanged(object sender, EventArgs e) {
             Config.HideNames = checkBox_HideNames.Checked;
         }
 
-        private void checkBox_Aimview_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_Aimview_CheckedChanged(object sender, EventArgs e) {
             Config.ShowESPWidget = checkBox_Aimview.Checked;
         }
 
-        private void checkBox_EnableMemWrite_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_EnableMemWrite_CheckedChanged(object sender, EventArgs e) {
             bool enabled = checkBox_EnableMemWrite.Checked;
             if (enabled) // Enable Memory Writing
             {
@@ -834,135 +794,110 @@ namespace arena_dma_radar.UI.Radar
                     "Are you sure you want to enable Memory Writing? This is riskier than using Read-Only radar features.",
                     "Enable Mem Writes?",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (dlg is DialogResult.Yes)
-                {
+                if (dlg is DialogResult.Yes) {
                     MemWrites.Enabled = enabled;
                     flowLayoutPanel_MemWrites.Enabled = enabled;
-                }
-                else
+                } else
                     checkBox_EnableMemWrite.Checked = false;
-            }
-            else // Disable Memory Writing
-            {
+            } else // Disable Memory Writing
+              {
                 MemWrites.Enabled = false;
                 flowLayoutPanel_MemWrites.Enabled = false;
             }
         }
 
-        private void checkBox_Chams_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_Chams_CheckedChanged(object sender, EventArgs e) {
             var enabled = checkBox_Chams.Checked;
             flowLayoutPanel_Chams.Enabled = enabled;
             MemWriteFeature<Chams>.Instance.Enabled = enabled;
             Chams.Config.Enabled = enabled;
         }
 
-        private void radioButton_Chams_Basic_CheckedChanged(object sender, EventArgs e)
-        {
+        private void radioButton_Chams_Basic_CheckedChanged(object sender, EventArgs e) {
             var enabled = radioButton_Chams_Basic.Checked;
             if (enabled)
                 Chams.Config.Mode = ChamsManager.ChamsMode.Basic;
         }
 
-        private void radioButton_Chams_Vischeck_CheckedChanged(object sender, EventArgs e)
-        {
+        private void radioButton_Chams_Vischeck_CheckedChanged(object sender, EventArgs e) {
             var enabled = radioButton_Chams_Vischeck.Checked;
             if (enabled)
                 Chams.Config.Mode = ChamsManager.ChamsMode.VisCheckGlow;
             flowLayoutPanel_Vischeck.Enabled = enabled;
         }
 
-        private void radioButton_Chams_Visible_CheckedChanged(object sender, EventArgs e)
-        {
+        private void radioButton_Chams_Visible_CheckedChanged(object sender, EventArgs e) {
             var enabled = radioButton_Chams_Visible.Checked;
             if (enabled)
                 Chams.Config.Mode = ChamsManager.ChamsMode.Visible;
             flowLayoutPanel_Vischeck.Enabled = enabled;
         }
 
-        private void checkBox_NoRecoilSway_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_NoRecoilSway_CheckedChanged(object sender, EventArgs e) {
             var enabled = checkBox_NoRecoilSway.Checked;
             flowLayoutPanel_NoRecoil.Enabled = enabled;
             MemWriteFeature<NoRecoil>.Instance.Enabled = enabled;
         }
 
-        private void TrackBar_NoSway_ValueChanged(object sender, EventArgs e)
-        {
+        private void TrackBar_NoSway_ValueChanged(object sender, EventArgs e) {
             var value = trackBar_NoSway.Value;
             label_Sway.Text = $"Sway {value}";
             MemWrites.Config.NoSwayAmount = value;
         }
 
-        private void TrackBar_NoRecoil_ValueChanged(object sender, EventArgs e)
-        {
+        private void TrackBar_NoRecoil_ValueChanged(object sender, EventArgs e) {
             var value = trackBar_NoRecoil.Value;
             label_Recoil.Text = $"Recoil {value}";
             MemWrites.Config.NoRecoilAmount = value;
         }
 
-        private void checkBox_NoVisor_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_NoVisor_CheckedChanged(object sender, EventArgs e) {
             MemWriteFeature<NoVisor>.Instance.Enabled = checkBox_NoVisor.Checked;
         }
 
-        private void checkBox_NoWepMalf_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_NoWepMalf_CheckedChanged(object sender, EventArgs e) {
             MemPatchFeature<NoWepMalfPatch>.Instance.Enabled = checkBox_NoWepMalf.Checked;
         }
 
-        private void textBox_ResWidth_TextChanged(object sender, EventArgs e)
-        {
-            if (int.TryParse(textBox_ResWidth.Text, out var w))
-            {
+        private void textBox_ResWidth_TextChanged(object sender, EventArgs e) {
+            if (int.TryParse(textBox_ResWidth.Text, out var w)) {
                 Config.MonitorWidth = w;
                 CameraManagerBase.UpdateViewportRes();
-            }
-            else
-            {
+            } else {
                 textBox_ResWidth.Text = "1920";
             }
         }
 
-        private void textBox_ResHeight_TextChanged(object sender, EventArgs e)
-        {
-            if (int.TryParse(textBox_ResHeight.Text, out var h))
-            {
+        private void textBox_ResHeight_TextChanged(object sender, EventArgs e) {
+            if (int.TryParse(textBox_ResHeight.Text, out var h)) {
                 Config.MonitorHeight = h;
                 CameraManagerBase.UpdateViewportRes();
-            }
-            else
-            {
+            } else {
                 textBox_ResHeight.Text = "1080";
             }
         }
 
-        private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
+        private void TabControl1_SelectedIndexChanged(object sender, EventArgs e) {
+            try {
+                if (tabControl1.SelectedTab == tabPage2) // Settings tab
+                {
+                    PopulateAvailableTeammatesListBox();
+                }
                 Config.Save();
-            }
-            catch
-            {
+            } catch {
             }
         }
 
-        private void checkBox_MapSetup_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox_MapSetup.Checked)
-            {
+        private void checkBox_MapSetup_CheckedChanged(object sender, EventArgs e) {
+            if (checkBox_MapSetup.Checked) {
                 groupBox_MapSetup.Visible = true;
                 var currentMap = LoneMapManager.Map.Config;
-                if (currentMap is not null)
-                {
+                if (currentMap is not null) {
                     textBox_mapX.Text = currentMap.X.ToString();
                     textBox_mapY.Text = currentMap.Y.ToString();
                     textBox_mapScale.Text = currentMap.Scale.ToString();
                 }
-            }
-            else
-            {
+            } else {
                 groupBox_MapSetup.Visible = false;
             }
         }
@@ -970,26 +905,19 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Event fires when Apply button is clicked in the "Map Setup Groupbox".
         /// </summary>
-        private void button_MapSetupApply_Click(object sender, EventArgs e)
-        {
+        private void button_MapSetupApply_Click(object sender, EventArgs e) {
             if (float.TryParse(textBox_mapX.Text, out var x) &&
                 float.TryParse(textBox_mapY.Text, out var y) &&
-                float.TryParse(textBox_mapScale.Text, out var scale))
-            {
+                float.TryParse(textBox_mapScale.Text, out var scale)) {
                 var currentMap = LoneMapManager.Map?.Config;
-                if (currentMap is not null)
-                {
+                if (currentMap is not null) {
                     currentMap.X = x;
                     currentMap.Y = y;
                     currentMap.Scale = scale;
-                }
-                else
-                {
+                } else {
                     MessageBox.Show(this, "No Map Loaded! Unable to apply.");
                 }
-            }
-            else
-            {
+            } else {
                 throw new Exception("INVALID float values in Map Setup.");
             }
         }
@@ -997,8 +925,7 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Fired when UI Scale Trackbar is Adjusted
         /// </summary>
-        private void TrackBar_UIScale_ValueChanged(object sender, EventArgs e)
-        {
+        private void TrackBar_UIScale_ValueChanged(object sender, EventArgs e) {
             var newScale = .01f * trackBar_UIScale.Value;
             Config.UIScale = newScale;
             label_UIScale.Text = $"UI Scale {newScale.ToString("n2")}";
@@ -1035,30 +962,24 @@ namespace arena_dma_radar.UI.Radar
             SKPaints.PaintExplosives.StrokeWidth = 3 * newScale;
             SKPaints.TextStatusSmall.TextSize = 13 * newScale;
 
-            #endregion
+            #endregion UpdatePaints
         }
 
         /// <summary>
         /// Event fires when the "Map Free" or "Map Follow" checkbox (button) is clicked on the Main Window.
         /// </summary>
-        private void checkBox_MapFree_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox_MapFree.Checked)
-            {
+        private void checkBox_MapFree_CheckedChanged(object sender, EventArgs e) {
+            if (checkBox_MapFree.Checked) {
                 checkBox_MapFree.Text = "Map Follow";
                 var localPlayer = LocalPlayer;
-                if (localPlayer is not null)
-                {
+                if (localPlayer is not null) {
                     var localPlayerMapPos = localPlayer.Position.ToMapPos(LoneMapManager.Map.Config);
-                    _mapPanPosition = new Vector2
-                    {
+                    _mapPanPosition = new Vector2 {
                         X = localPlayerMapPos.X,
                         Y = localPlayerMapPos.Y
                     };
                 }
-            }
-            else
-            {
+            } else {
                 checkBox_MapFree.Text = "Map Free";
             }
         }
@@ -1066,32 +987,25 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Handles mouse movement on Map Canvas, specifically checks if mouse moves close to a 'Player' position.
         /// </summary>
-        private void MapCanvas_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (_mouseDown && checkBox_MapFree.Checked)
-            {
+        private void MapCanvas_MouseMove(object sender, MouseEventArgs e) {
+            if (_mouseDown && checkBox_MapFree.Checked) {
                 var deltaX = -(e.X - _lastMousePosition.X);
                 var deltaY = -(e.Y - _lastMousePosition.Y);
 
                 // Update both X and Y positions
-                _mapPanPosition = new Vector2
-                {
+                _mapPanPosition = new Vector2 {
                     X = _mapPanPosition.X + deltaX,
                     Y = _mapPanPosition.Y + deltaY
                 };
                 _lastMousePosition = e.Location; // Store the current mouse position for the next move event
-            }
-            else
-            {
-                if (!InRaid)
-                {
+            } else {
+                if (!InRaid) {
                     ClearRefs();
                     return;
                 }
 
                 var items = MouseOverItems;
-                if (items?.Any() != true)
-                {
+                if (items?.Any() != true) {
                     ClearRefs();
                     return;
                 }
@@ -1102,14 +1016,12 @@ namespace arena_dma_radar.UI.Radar
                                 < Vector2.Distance(x2.MouseoverPosition, mouse)
                         ? x1
                         : x2); // Get object 'closest' to mouse position
-                if (Vector2.Distance(closest.MouseoverPosition, mouse) >= 12)
-                {
+                if (Vector2.Distance(closest.MouseoverPosition, mouse) >= 12) {
                     ClearRefs();
                     return;
                 }
 
-                switch (closest)
-                {
+                switch (closest) {
                     case Player player:
                         _mouseOverItem = player;
                         if (player.IsHumanHostile
@@ -1118,13 +1030,13 @@ namespace arena_dma_radar.UI.Radar
                         else
                             MouseoverGroup = null; // Clear Group ID
                         break;
+
                     default:
                         ClearRefs();
                         break;
                 }
 
-                void ClearRefs()
-                {
+                void ClearRefs() {
                     _mouseOverItem = null;
                     MouseoverGroup = null;
                 }
@@ -1134,28 +1046,21 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Handle loading streamers on dbl click.
         /// </summary>
-        private void MapCanvas_MouseDblClick(object sender, MouseEventArgs e)
-        {
+        private void MapCanvas_MouseDblClick(object sender, MouseEventArgs e) {
             if (InRaid && _mouseOverItem is Player player && player.IsStreaming) // Must be in-raid
-                try
-                {
+                try {
                     Process.Start(new ProcessStartInfo(player.TwitchChannelURL) { UseShellExecute = true });
-                }
-                catch
-                {
+                } catch {
                     MessageBox.Show("Unable to open this player's Twitch. Do you have a default browser set?");
                 }
         }
 
-        private void MapCanvas_MouseUp(object sender, MouseEventArgs e)
-        {
+        private void MapCanvas_MouseUp(object sender, MouseEventArgs e) {
             _mouseDown = false;
         }
 
-        private void MapCanvas_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button is MouseButtons.Left)
-            {
+        private void MapCanvas_MouseDown(object sender, MouseEventArgs e) {
+            if (e.Button is MouseButtons.Left) {
                 _lastMousePosition = e.Location;
                 _mouseDown = true;
             }
@@ -1169,21 +1074,15 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Automatically detect Game Resolution.
         /// </summary>
-        private async void button_DetectRes_Click(object sender, EventArgs e)
-        {
+        private async void button_DetectRes_Click(object sender, EventArgs e) {
             button_DetectRes.Enabled = false;
             button_DetectRes.Text = "Working...";
-            try
-            {
-                if (Memory.Ready)
-                {
-                    await Task.Run(() =>
-                    {
-                        try
-                        {
+            try {
+                if (Memory.Ready) {
+                    await Task.Run(() => {
+                        try {
                             var res = Memory.GetMonitorRes();
-                            this.Invoke(() =>
-                            {
+                            this.Invoke(() => {
                                 textBox_ResWidth.Text = res.Width.ToString();
                                 textBox_ResHeight.Text = res.Height.ToString();
                                 MessageBox.Show(this,
@@ -1192,9 +1091,7 @@ namespace arena_dma_radar.UI.Radar
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Information);
                             });
-                        }
-                        catch (Exception ex)
-                        {
+                        } catch (Exception ex) {
                             MessageBox.Show(this,
                                 $"ERROR Detecting Resolution! Please try again.\n{ex.Message}",
                                 Program.Name,
@@ -1202,16 +1099,13 @@ namespace arena_dma_radar.UI.Radar
                                 MessageBoxIcon.Error);
                         }
                     });
-                }
-                else
+                } else
                     MessageBox.Show(this,
                         "Game is not running! Make sure the EFT Arena Process is started, and try again.",
                         Program.Name,
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
-            }
-            finally
-            {
+            } finally {
                 button_DetectRes.Enabled = true;
                 button_DetectRes.Text = "Auto-Detect";
             }
@@ -1220,28 +1114,21 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Launch ColorPicker for Radar Colors.
         /// </summary>
-        private void button_Radar_ColorPicker_Click(object sender, EventArgs e)
-        {
+        private void button_Radar_ColorPicker_Click(object sender, EventArgs e) {
             button_Radar_ColorPicker.Enabled = false;
-            try
-            {
+            try {
                 using var cp =
                     new ColorPicker<RadarColorOption, ColorItem<RadarColorOption>>("Radar Color Picker", Config.Colors);
                 cp.ShowDialog();
-                if (cp.DialogResult is DialogResult.OK && cp.Result is not null)
-                {
+                if (cp.DialogResult is DialogResult.OK && cp.Result is not null) {
                     RadarColorOptions.SetColors(cp.Result);
                     Config.Colors = cp.Result;
                     Config.Save();
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 MessageBox.Show($"ERROR Updating Colors! {ex.Message}", "Radar Color Picker", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-            }
-            finally
-            {
+            } finally {
                 button_Radar_ColorPicker.Enabled = true;
             }
         }
@@ -1249,111 +1136,91 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Backup the Config File.
         /// </summary>
-        private void button_BackupConfig_Click(object sender, EventArgs e)
-        {
+        private void button_BackupConfig_Click(object sender, EventArgs e) {
             button_BackupConfig.Enabled = false;
-            try
-            {
+            try {
                 const string backupFile = Config.Filename + ".bak";
-                if (File.Exists(backupFile))
-                {
+                if (File.Exists(backupFile)) {
                     var prompt = MessageBox.Show(this, "A Config Backup already exists, would you like to overwrite it?",
                         Program.Name, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (prompt is not DialogResult.Yes)
                         return;
                 }
 
-                var options = new JsonSerializerOptions
-                {
+                var options = new JsonSerializerOptions {
                     WriteIndented = true
                 };
                 var json = JsonSerializer.Serialize<Config>(Config, options);
                 File.WriteAllText(backupFile, json);
                 MessageBox.Show(this, $"Config backed up successfully to {backupFile}!", Program.Name, MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 MessageBox.Show(this, $"ERROR Backing up Config!\n\n{ex.Message}", Program.Name, MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-            }
-            finally
-            {
+            } finally {
                 button_BackupConfig.Enabled = true;
             }
         }
 
-        private void checkBox_AimBotEnabled_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_AimBotEnabled_CheckedChanged(object sender, EventArgs e) {
             var enabled = checkBox_AimBotEnabled.Checked;
             Aimbot.Config.Enabled = enabled;
             flowLayoutPanel_Aimbot.Enabled = enabled;
         }
 
-        private void comboBox_AimbotTarget_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        private void comboBox_AimbotTarget_SelectedIndexChanged(object sender, EventArgs e) {
             if (comboBox_AimbotTarget.SelectedItem is not null &&
-                comboBox_AimbotTarget.SelectedItem is BonesListItem entry)
-            {
+                comboBox_AimbotTarget.SelectedItem is BonesListItem entry) {
                 var bone = entry.Bone;
                 Aimbot.Config.Bone = bone;
             }
         }
 
-        private void radioButton_AimTarget_FOV_CheckedChanged(object sender, EventArgs e)
-        {
+        private void radioButton_AimTarget_FOV_CheckedChanged(object sender, EventArgs e) {
             if (radioButton_AimTarget_FOV.Checked)
                 Aimbot.Config.TargetingMode = Aimbot.AimbotTargetingMode.FOV;
         }
 
-        private void radioButton_AimTarget_CQB_CheckedChanged(object sender, EventArgs e)
-        {
+        private void radioButton_AimTarget_CQB_CheckedChanged(object sender, EventArgs e) {
             if (radioButton_AimTarget_CQB.Checked)
                 Aimbot.Config.TargetingMode = Aimbot.AimbotTargetingMode.CQB;
         }
 
-        private void TrackBar_AimFOV_ValueChanged(object sender, EventArgs e)
-        {
+        private void TrackBar_AimFOV_ValueChanged(object sender, EventArgs e) {
             float fov = trackBar_AimFOV.Value; // Cache value
             Aimbot.Config.FOV = fov; // Set Global
             label_AimFOV.Text = $"FOV {(int)fov}";
         }
 
-        private void checkBox_ESP_AimFov_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESP_AimFov_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.ShowAimFOV = checkBox_ESP_AimFov.Checked;
         }
 
-        private void checkBox_ESP_AimLock_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESP_AimLock_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.ShowAimLock = checkBox_ESP_AimLock.Checked;
         }
 
-        #endregion
+        #endregion Events
 
         #region Overrides
 
         /// <summary>
         /// Form closing event.
         /// </summary>
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            try
-            {
+        protected override void OnFormClosing(FormClosingEventArgs e) {
+            try {
                 _renderTimer.Dispose();
                 Window = null;
-                if (_espWidget is not null)
-                {
+                if (_espWidget is not null) {
                     Config.Widgets.ESPWidgetLocation = _espWidget.ClientRectangle;
                     Config.Widgets.ESPWidgetMinimized = _espWidget.Minimized;
                 }
 
                 Config.WindowSize = Size;
                 Config.WindowMaximized = WindowState is FormWindowState.Maximized;
+                Config.Save(); // Save config on close
                 Memory.CloseFPGA(); // Close FPGA
-            }
-            finally
-            {
+            } finally {
                 base.OnFormClosing(e); // Proceed with closing
             }
         }
@@ -1361,22 +1228,18 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Process hotkey presses.
         /// </summary>
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == Keys.F1)
-            {
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+            if (keyData == Keys.F1) {
                 ZoomIn(5);
                 return true;
             }
 
-            if (keyData == Keys.F2)
-            {
+            if (keyData == Keys.F2) {
                 ZoomOut(5);
                 return true;
             }
 
-            if (keyData == Keys.F11)
-            {
+            if (keyData == Keys.F11) {
                 var toFullscreen = FormBorderStyle is FormBorderStyle.Sizable;
                 ToggleFullscreen(toFullscreen);
                 return true;
@@ -1388,8 +1251,7 @@ namespace arena_dma_radar.UI.Radar
         /// <summary>
         /// Process mousewheel events.
         /// </summary>
-        protected override void OnMouseWheel(MouseEventArgs e)
-        {
+        protected override void OnMouseWheel(MouseEventArgs e) {
             if (tabControl1.SelectedIndex == 0) // Main Radar Tab should be open
             {
                 if (e.Delta > 0) // mouse wheel up (zoom in)
@@ -1412,24 +1274,20 @@ namespace arena_dma_radar.UI.Radar
             base.OnMouseWheel(e);
         }
 
-        #endregion
+        #endregion Overrides
 
         #region Hotkey Manager
 
         /// <summary>
         /// Loads the Hotkey Manager GUI.
         /// </summary>
-        private void button_HotkeyManager_Click(object sender, EventArgs e)
-        {
+        private void button_HotkeyManager_Click(object sender, EventArgs e) {
             button_HotkeyManager.Enabled = false;
-            try
-            {
+            try {
                 var hkMgr = new HotkeyManager();
                 hkMgr.ShowDialog();
                 Config.Save();
-            }
-            finally
-            {
+            } finally {
                 button_HotkeyManager.Enabled = true;
             }
         }
@@ -1438,8 +1296,7 @@ namespace arena_dma_radar.UI.Radar
         /// Loads Hotkey Manager resources.
         /// Only call from Primary Thread/Window (ONCE!)
         /// </summary>
-        private void LoadHotkeyManager()
-        {
+        private void LoadHotkeyManager() {
             SetHotkeyEvents();
             HotkeyManager.Initialize(this);
         }
@@ -1447,8 +1304,7 @@ namespace arena_dma_radar.UI.Radar
         private const int HK_ZoomTickAmt = 5; // amt to zoom
         private const int HK_ZoomTickDelay = 120; // ms
 
-        private void SetHotkeyEvents()
-        {
+        private void SetHotkeyEvents() {
             var zoomIn = new HotkeyActionController("Zoom In");
             zoomIn.Delay = HK_ZoomTickDelay;
             zoomIn.HotkeyDelayElapsed += ZoomIn_HotkeyDelayElapsed;
@@ -1487,78 +1343,66 @@ namespace arena_dma_radar.UI.Radar
             HotkeyManager.RegisterActionController(toggleSafeLock);
         }
 
-        private void ToggleSafeLock_HotkeyStateChanged(object sender, HotkeyEventArgs e)
-        {
+        private void ToggleSafeLock_HotkeyStateChanged(object sender, HotkeyEventArgs e) {
             if (e.State)
                 checkBox_SA_SafeLock.Checked = !checkBox_SA_SafeLock.Checked;
         }
 
-        private void ToggleRandomBone_HotkeyStateChanged(object sender, HotkeyEventArgs e)
-        {
+        private void ToggleRandomBone_HotkeyStateChanged(object sender, HotkeyEventArgs e) {
             if (e.State && flowLayoutPanel_Aimbot.Enabled)
                 checkBox_AimRandomBone.Checked = !checkBox_AimRandomBone.Checked;
         }
 
-        private void ToggleAutoBone_HotkeyStateChanged(object sender, HotkeyEventArgs e)
-        {
+        private void ToggleAutoBone_HotkeyStateChanged(object sender, HotkeyEventArgs e) {
             if (e.State)
                 checkBox_SA_AutoBone.Checked = !checkBox_SA_AutoBone.Checked;
         }
 
-        private void ToggleAimbotMode_HotkeyStateChanged(object sender, HotkeyEventArgs e)
-        {
+        private void ToggleAimbotMode_HotkeyStateChanged(object sender, HotkeyEventArgs e) {
             if (e.State && checkBox_AimBotEnabled.Checked)
                 ToggleAimbotMode();
         }
 
-        private void ToggleAimbotBone_HotkeyStateChanged(object sender, HotkeyEventArgs e)
-        {
+        private void ToggleAimbotBone_HotkeyStateChanged(object sender, HotkeyEventArgs e) {
             if (e.State && comboBox_AimbotTarget.Enabled)
                 ToggleAimbotBone();
         }
 
-        private void EngageAimbot_HotkeyStateChanged(object sender, HotkeyEventArgs e)
-        {
+        private void EngageAimbot_HotkeyStateChanged(object sender, HotkeyEventArgs e) {
             Aimbot.Engaged = e.State;
         }
 
-        private void ToggleNames_HotkeyStateChanged(object sender, HotkeyEventArgs e)
-        {
+        private void ToggleNames_HotkeyStateChanged(object sender, HotkeyEventArgs e) {
             if (e.State)
                 checkBox_HideNames.Checked = !checkBox_HideNames.Checked;
         }
 
-        private void ZoomOut_HotkeyDelayElapsed(object sender, EventArgs e)
-        {
+        private void ZoomOut_HotkeyDelayElapsed(object sender, EventArgs e) {
             ZoomOut(HK_ZoomTickAmt);
         }
 
-        private void ZoomIn_HotkeyDelayElapsed(object sender, EventArgs e)
-        {
+        private void ZoomIn_HotkeyDelayElapsed(object sender, EventArgs e) {
             ZoomIn(HK_ZoomTickAmt);
         }
 
-        private void ToggleAimview_HotkeyStateChanged(object sender, HotkeyEventArgs e)
-        {
+        private void ToggleAimview_HotkeyStateChanged(object sender, HotkeyEventArgs e) {
             if (e.State)
                 checkBox_Aimview.Checked = !checkBox_Aimview.Checked;
         }
 
-        private void ToggleEsp_HotkeyStateChanged(object sender, HotkeyEventArgs e)
-        {
+        private void ToggleEsp_HotkeyStateChanged(object sender, HotkeyEventArgs e) {
             if (e.State && CameraManagerBase.EspRunning)
                 EspForm.ShowESP = !EspForm.ShowESP;
         }
 
-        #endregion
+        #endregion Hotkey Manager
 
         #region ESP Controls
 
         /// <summary>
         /// Load ESP Configuration.
         /// </summary>
-        private void LoadESPConfig()
-        {
+        private void LoadESPConfig() {
             trackBar_EspFontScale.ValueChanged += TrackBar_EspFontScale_ValueChanged;
             trackBar_EspLineScale.ValueChanged += TrackBar_EspLineScale_ValueChanged;
             textBox_EspFpsCap.Text = Config.ESP.FPSCap.ToString();
@@ -1574,11 +1418,11 @@ namespace arena_dma_radar.UI.Radar
             checkBox_ESP_AimFov.Checked = Config.ESP.ShowAimFOV;
             checkBox_ESP_StatusText.Checked = Config.ESP.ShowStatusText;
             Config.ESP.PlayerRendering ??= new ESPPlayerRenderOptions();
-            switch (Config.ESP.PlayerRendering.RenderingMode)
-            {
+            switch (Config.ESP.PlayerRendering.RenderingMode) {
                 case ESPPlayerRenderMode.None:
                     radioButton_ESPRender_None.Checked = true;
                     break;
+
                 case ESPPlayerRenderMode.Bones:
                     radioButton_ESPRender_Bones.Checked = true;
                     break;
@@ -1589,14 +1433,12 @@ namespace arena_dma_radar.UI.Radar
             checkBox_ESPRender_Dist.Checked = Config.ESP.PlayerRendering.ShowDist;
             /// ESP Screens ComboBox
             var allScreens = Screen.AllScreens;
-            if (Config.ESP.SelectedScreen > allScreens.Length - 1)
-            {
+            if (Config.ESP.SelectedScreen > allScreens.Length - 1) {
                 Config.ESP.SelectedScreen = 0;
                 checkBox_ESP_AutoFS.Checked = false;
             }
 
-            for (var i = 0; i < allScreens.Length; i++)
-            {
+            for (var i = 0; i < allScreens.Length; i++) {
                 var entry = new ScreenEntry(i);
                 comboBox_ESPAutoFS.Items.Add(entry);
             }
@@ -1606,42 +1448,35 @@ namespace arena_dma_radar.UI.Radar
                 StartESP();
         }
 
-        private void radioButton_ESPRender_None_CheckedChanged(object sender, EventArgs e)
-        {
+        private void radioButton_ESPRender_None_CheckedChanged(object sender, EventArgs e) {
             if (radioButton_ESPRender_None.Checked)
                 Config.ESP.PlayerRendering.RenderingMode = ESPPlayerRenderMode.None;
         }
 
-        private void radioButton_ESPRender_Bones_CheckedChanged(object sender, EventArgs e)
-        {
+        private void radioButton_ESPRender_Bones_CheckedChanged(object sender, EventArgs e) {
             if (radioButton_ESPRender_Bones.Checked)
                 Config.ESP.PlayerRendering.RenderingMode = ESPPlayerRenderMode.Bones;
         }
 
-        private void checkBox_ESPRender_Labels_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESPRender_Labels_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.PlayerRendering.ShowLabels = checkBox_ESPRender_Labels.Checked;
         }
 
-        private void checkBox_ESPRender_Weapons_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESPRender_Weapons_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.PlayerRendering.ShowWeapons = checkBox_ESPRender_Weapons.Checked;
         }
 
-        private void checkBox_ESPRender_Dist_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESPRender_Dist_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.PlayerRendering.ShowDist = checkBox_ESPRender_Dist.Checked;
         }
 
-        private void checkBox_ESP_AutoFS_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESP_AutoFS_CheckedChanged(object sender, EventArgs e) {
             var enabled = checkBox_ESP_AutoFS.Checked;
             comboBox_ESPAutoFS.Enabled = enabled;
             Config.ESP.AutoFullscreen = enabled;
         }
 
-        private void comboBox_ESPAutoFS_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        private void comboBox_ESPAutoFS_SelectedIndexChanged(object sender, EventArgs e) {
             if (comboBox_ESPAutoFS.SelectedItem is ScreenEntry entry)
                 Config.ESP.SelectedScreen = entry.ScreenNumber;
         }
@@ -1649,34 +1484,25 @@ namespace arena_dma_radar.UI.Radar
         private void button_StartESP_Click(object sender, EventArgs e) =>
             StartESP();
 
-        private void StartESP()
-        {
+        private void StartESP() {
             button_StartESP.Text = "Running...";
             flowLayoutPanel_ESPSettings.Enabled = false;
             flowLayoutPanel_MonitorSettings.Enabled = false;
-            var t = new Thread(() =>
-            {
-                try
-                {
+            var t = new Thread(() => {
+                try {
                     EspForm.ShowESP = true;
                     Application.Run(new EspForm());
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     MessageBox.Show("ESP Critical Runtime Error! " + ex, Program.Name, MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    Invoke(() =>
-                    {
+                } finally {
+                    Invoke(() => {
                         button_StartESP.Text = "Start ESP";
                         flowLayoutPanel_ESPSettings.Enabled = true;
                         flowLayoutPanel_MonitorSettings.Enabled = true;
                     });
                 }
-            })
-            {
+            }) {
                 IsBackground = true,
                 Priority = ThreadPriority.AboveNormal
             };
@@ -1685,41 +1511,34 @@ namespace arena_dma_radar.UI.Radar
             tabControl1.SelectedIndex = 0; // Switch back to Radar
         }
 
-        private void textBox_EspFpsCap_TextChanged(object sender, EventArgs e)
-        {
+        private void textBox_EspFpsCap_TextChanged(object sender, EventArgs e) {
             if (int.TryParse(textBox_EspFpsCap.Text, out var value))
                 Config.ESP.FPSCap = value;
             else
                 textBox_EspFpsCap.Text = Config.ESP.FPSCap.ToString();
         }
 
-        private void checkBox_ESP_Grenades_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESP_Grenades_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.ShowGrenades = checkBox_ESP_Grenades.Checked;
         }
 
-        private void checkBox_ESP_FPS_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESP_FPS_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.ShowFPS = checkBox_ESP_FPS.Checked;
         }
 
-        private void checkBox_ESP_ShowMag_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESP_ShowMag_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.ShowMagazine = checkBox_ESP_ShowMag.Checked;
         }
 
-        private void checkBox_ESP_HighAlert_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESP_HighAlert_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.HighAlert = checkBox_ESP_HighAlert.Checked;
         }
 
-        private void checkBox_ESP_StatusText_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_ESP_StatusText_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.ShowStatusText = checkBox_ESP_StatusText.Checked;
         }
 
-        private static void ScaleESPPaints()
-        {
+        private static void ScaleESPPaints() {
             float fontScale = Config.ESP.FontScale;
             float lineScale = Config.ESP.LineScale;
             SKPaints.PaintPlayerESP.StrokeWidth = 1.5f * lineScale;
@@ -1746,71 +1565,184 @@ namespace arena_dma_radar.UI.Radar
             SKPaints.TextStatusSmallEsp.TextSize = 13 * fontScale;
         }
 
-        private void button_EspColorPicker_Click(object sender, EventArgs e)
-        {
+        private void button_EspColorPicker_Click(object sender, EventArgs e) {
             button_EspColorPicker.Enabled = false;
-            try
-            {
+            try {
                 using var cp =
                     new ColorPicker<EspColorOption, ColorItem<EspColorOption>>("ESP Color Picker", Config.ESP.Colors);
                 cp.ShowDialog();
-                if (cp.DialogResult is DialogResult.OK && cp.Result is not null)
-                {
+                if (cp.DialogResult is DialogResult.OK && cp.Result is not null) {
                     EspColorOptions.SetColors(cp.Result);
                     Config.ESP.Colors = cp.Result;
                     Config.Save();
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 MessageBox.Show($"ERROR Updating Colors! {ex.Message}", "ESP Color Picker", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-            }
-            finally
-            {
+            } finally {
                 button_EspColorPicker.Enabled = true;
             }
         }
 
-        private void TrackBar_EspFontScale_ValueChanged(object sender, EventArgs e)
-        {
+        private void TrackBar_EspFontScale_ValueChanged(object sender, EventArgs e) {
             float value = .01f * trackBar_EspFontScale.Value;
             label_EspFontScale.Text = $"Font Scale {value.ToString("n2")}";
             Config.ESP.FontScale = value;
             ScaleESPPaints();
         }
 
-        private void TrackBar_EspLineScale_ValueChanged(object sender, EventArgs e)
-        {
+        private void TrackBar_EspLineScale_ValueChanged(object sender, EventArgs e) {
             float value = .01f * trackBar_EspLineScale.Value;
             label_EspLineScale.Text = $"Line Scale {value.ToString("n2")}";
             Config.ESP.LineScale = value;
             ScaleESPPaints();
         }
-        #endregion
 
-        private void linkLabel_CheckForUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            const string updatesUrl = "https://lone-eft.com/opensource";
-            Process.Start(new ProcessStartInfo()
+        #endregion ESP Controls
+
+        #region Custom Teammate Colors UI Logic
+
+        /// <summary>
+        /// Helper class for displaying teammates in a ListBox.
+        /// </summary>
+        private class TeammateDisplayItem {
+            public string DisplayName { get; set; }
+            public string AccountId { get; set; }
+
+            public override string ToString() => DisplayName; // This is what the ListBox will show
+        }
+
+        private void PopulateAvailableTeammatesListBox() {
+            listBox_AvailableTeammates.Items.Clear();
+            if (InRaid && AllPlayers is not null) {
+                foreach (var player in AllPlayers) {
+                    // Ensure player is a teammate and has a valid AccountID and Name
+                    if (player.Type == Player.PlayerType.Teammate &&
+                        !string.IsNullOrEmpty(player.AccountID) &&
+                        !string.IsNullOrEmpty(player.Name) &&
+                        player != LocalPlayer) // Exclude local player from this list
+                    {
+                        listBox_AvailableTeammates.Items.Add(new TeammateDisplayItem { DisplayName = $"{player.Name} ({player.AccountID})", AccountId = player.AccountID });
+                    }
+                }
+                listBox_AvailableTeammates.DisplayMember = "DisplayName";
+            }
+        }
+
+        private void LoadCustomTeammateColorsToListBox() {
+            listBox_CustomTeammateColors.Items.Clear();
+            foreach (var entry in Config.CustomTeammateColors) {
+                listBox_CustomTeammateColors.Items.Add($"{entry.Key}: {entry.Value}");
+            }
+        }
+
+        private void listBox_AvailableTeammates_SelectedIndexChanged(object sender, EventArgs e) {
+            if (listBox_AvailableTeammates.SelectedItem is TeammateDisplayItem selectedTeammate) {
+                textBox_CustomTeammateAccountId.Text = selectedTeammate.AccountId;
+                if (Config.CustomTeammateColors.TryGetValue(selectedTeammate.AccountId, out string colorHex)) {
+                    textBox_CustomTeammateColorHex.Text = colorHex;
+                } else {
+                    textBox_CustomTeammateColorHex.Clear();
+                }
+            }
+        }
+
+        private void listBox_CustomTeammateColors_SelectedIndexChanged(object sender, EventArgs e) {
+            if (listBox_CustomTeammateColors.SelectedItem is string selectedEntry) {
+                var parts = selectedEntry.Split(new[] { ": " }, StringSplitOptions.None);
+                if (parts.Length == 2) {
+                    textBox_CustomTeammateAccountId.Text = parts[0];
+                    textBox_CustomTeammateColorHex.Text = parts[1];
+                }
+            } else {
+                // Clear textboxes only if the selection is truly cleared and not due to another listbox taking focus.
+                if (listBox_CustomTeammateColors.SelectedIndex == -1 &&
+                    (listBox_AvailableTeammates.SelectedItem == null ||
+                     (listBox_AvailableTeammates.SelectedItem is TeammateDisplayItem availableItem && availableItem.AccountId != textBox_CustomTeammateAccountId.Text)
+                    )
+                   ) {
+                    textBox_CustomTeammateAccountId.Clear();
+                    textBox_CustomTeammateColorHex.Clear();
+                }
+            }
+        }
+
+        private void button_CustomTeammateColorPicker_Click(object sender, EventArgs e) {
+            // Ensure only one dialog is shown even if event fires multiple times (though the root cause should be fixed)
+            if (Application.OpenForms.OfType<ColorDialog>().Any())
+                return;
+
+            using (var dialog = new ColorDialog()) // Use a local instance to be safe
             {
+                if (dialog.ShowDialog(this) == DialogResult.OK) // Pass 'this' to parent it correctly
+                {
+                    textBox_CustomTeammateColorHex.Text = $"#{dialog.Color.R:X2}{dialog.Color.G:X2}{dialog.Color.B:X2}";
+                }
+            }
+        }
+
+        private void button_AddUpdateCustomTeammateColor_Click(object sender, EventArgs e) {
+            string accountId = textBox_CustomTeammateAccountId.Text.Trim();
+            string colorHex = textBox_CustomTeammateColorHex.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(accountId)) {
+                MessageBox.Show("Account ID cannot be empty. Select a teammate from the 'Current Teammates' list or a configured entry from 'Configured Custom Colors'.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!SKColor.TryParse(colorHex, out _)) {
+                MessageBox.Show("Invalid color hex string. Please use format like #RRGGBB or #AARRGGBB (e.g., #FF0000 for red).", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Config.CustomTeammateColors[accountId] = colorHex;
+            LoadCustomTeammateColorsToListBox();
+            Config.Save();
+        }
+
+        private void button_RemoveCustomTeammateColor_Click(object sender, EventArgs e) {
+            string accountIdToRemove = textBox_CustomTeammateAccountId.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(accountIdToRemove)) {
+                MessageBox.Show("Please select an entry to remove from the 'Configured Custom Colors' list, or ensure an Account ID is populated from the 'Current Teammates' list.", "Selection Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (Config.CustomTeammateColors.ContainsKey(accountIdToRemove)) {
+                var confirmResult = MessageBox.Show($"Are you sure you want to remove the custom color for Account ID: {accountIdToRemove}?", "Confirm Removal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (confirmResult == DialogResult.Yes) {
+                    Config.CustomTeammateColors.Remove(accountIdToRemove);
+                    LoadCustomTeammateColorsToListBox();
+                    Config.Save();
+
+                    if (textBox_CustomTeammateAccountId.Text == accountIdToRemove) {
+                        textBox_CustomTeammateAccountId.Clear();
+                        textBox_CustomTeammateColorHex.Clear();
+                    }
+                }
+            } else {
+                MessageBox.Show("Account ID not found in configured custom colors.", "Not Found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        #endregion Custom Teammate Colors UI Logic
+
+        private void linkLabel_CheckForUpdates_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            const string updatesUrl = "https://lone-eft.com/opensource";
+            Process.Start(new ProcessStartInfo() {
                 FileName = updatesUrl,
                 UseShellExecute = true
             });
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-
+        private void button1_Click(object sender, EventArgs e) {
         }
 
-        private void checkBox_Bomb_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_Bomb_CheckedChanged(object sender, EventArgs e) {
             Config.ESP.PlayerRendering.ShowBomb = checkBox_Bomb.Checked;
         }
 
-        private void checkBox_RadarBomb_CheckedChanged(object sender, EventArgs e)
-        {
+        private void checkBox_RadarBomb_CheckedChanged(object sender, EventArgs e) {
             Config.ShowBomb = checkBox_RadarBomb.Checked;
         }
     }
