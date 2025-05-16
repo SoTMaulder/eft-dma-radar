@@ -4,151 +4,109 @@ using eft_dma_shared.Common.DMA.ScatterAPI;
 using eft_dma_shared.Common.Misc.Commercial;
 using eft_dma_shared.Common.Players;
 using eft_dma_shared.Common.Unity;
+using SDK; // For Offsets
 
-namespace arena_dma_radar.Arena.ArenaPlayer
-{
-    public sealed class ArenaObservedPlayer : Player
-    {
-        /// <summary>
-        /// ObservedPlayerController for non-clientplayer players.
-        /// </summary>
+namespace arena_dma_radar.Arena.ArenaPlayer {
+
+    public sealed class ArenaObservedPlayer : Player {
         private ulong ObservedPlayerController { get; }
-        /// <summary>
-        /// ObservedHealthController for non-clientplayer players.
-        /// </summary>
         private ulong ObservedHealthController { get; }
-        /// <summary>
-        /// Player name.
-        /// </summary>
+
         public override string Name { get; }
-        /// <summary>
-        /// Account UUID for Human Controlled Players.
-        /// </summary>
         public override string AccountID { get; }
-        /// <summary>
-        /// Group that the player belongs to.
-        /// </summary>
         public override int TeamID { get; } = -1;
-        /// <summary>
-        /// Player's Faction.
-        /// </summary>
         public override Enums.EPlayerSide PlayerSide { get; }
-        /// <summary>
-        /// Player is Human-Controlled.
-        /// </summary>
         public override bool IsHuman { get; }
-        /// <summary>
-        /// MovementContext / StateContext
-        /// </summary>
         public override ulong MovementContext { get; }
-        /// <summary>
-        /// EFT.PlayerBody
-        /// </summary>
         public override ulong Body { get; }
-        /// <summary>
-        /// Inventory Controller field address.
-        /// </summary>
-        public override ulong InventoryControllerAddr { get; }
-        /// <summary>
-        /// Hands Controller field address.
-        /// </summary>
+        public override ulong InventoryControllerAddr { get; } // Stores the address of the field containing the pointer
         public override ulong HandsControllerAddr { get; }
-        /// <summary>
-        /// Corpse field address..
-        /// </summary>
         public override ulong CorpseAddr { get; }
-        /// <summary>
-        /// Player Rotation Field Address (view angles).
-        /// </summary>
         public override ulong RotationAddress { get; }
-        /// <summary>
-        /// Player's Skeleton Bones.
-        /// </summary>
         public override Skeleton Skeleton { get; }
-        /// <summary>
-        /// Player's Current Health Status
-        /// </summary>
         public Enums.ETagStatus HealthStatus { get; private set; } = Enums.ETagStatus.Healthy;
-        /// <summary>
-        /// Player's Gear/Loadout Information and contained items.
-        /// </summary>
+
         public GearManager Gear { get; private set; }
-        /// <summary>
-        /// Contains information about the item/weapons in Player's hands.
-        /// </summary>
         public HandsManager Hands { get; private set; }
 
-        internal ArenaObservedPlayer(ulong playerBase) : base(playerBase)
-        {
+        /// <summary>
+        /// indicates if this player is carrying the bomb (backpack).
+        /// </summary>
+        public bool HasBomb => Gear?.HasBomb ?? false;
+
+        internal ArenaObservedPlayer(ulong playerBase) : base(playerBase) {
             var side = (Enums.EPlayerSide)Memory.ReadValue<int>(this + Offsets.ObservedPlayerView.Side, false);
             var cameraType = Memory.ReadValue<int>(this + Offsets.ObservedPlayerView.VisibleToCameraType);
             ArgumentOutOfRangeException.ThrowIfNotEqual(cameraType, (int)Enums.ECameraType.Default, nameof(cameraType));
+
             ObservedPlayerController = Memory.ReadPtr(this + Offsets.ObservedPlayerView.ObservedPlayerController);
             ArgumentOutOfRangeException.ThrowIfNotEqual(this,
                 Memory.ReadValue<ulong>(ObservedPlayerController + Offsets.ObservedPlayerController.Player),
                 nameof(ObservedPlayerController));
+
             ObservedHealthController = Memory.ReadPtr(ObservedPlayerController + Offsets.ObservedPlayerController.HealthController);
             ArgumentOutOfRangeException.ThrowIfNotEqual(this,
                 Memory.ReadValue<ulong>(ObservedHealthController + Offsets.ObservedHealthController.Player),
                 nameof(ObservedHealthController));
+
             Body = Memory.ReadPtr(this + Offsets.ObservedPlayerView.PlayerBody);
+            // InventoryControllerAddr is the location of the pointer to the InventoryController object
             InventoryControllerAddr = ObservedPlayerController + Offsets.ObservedPlayerController.InventoryController;
             HandsControllerAddr = ObservedPlayerController + Offsets.ObservedPlayerController.HandsController;
             CorpseAddr = ObservedHealthController + Offsets.ObservedHealthController.PlayerCorpse;
 
+            // initialize gearmanager with the actual inventorycontroller object address
+            try {
+                ulong actualInventoryControllerObjectPtr = Memory.ReadPtr(InventoryControllerAddr);
+                Gear = new GearManager(actualInventoryControllerObjectPtr);
+            } catch (Exception ex) {
+                // if gearmanager fails to initialize, log it and continue. gear will be null.
+                LoneLogging.WriteLine($"failed to initialize gearmanager for player @ 0x{playerBase:x}: {ex.Message}");
+                Gear = null; // Ensure Gear is null if initialization fails
+            }
+
             AccountID = GetAccountID();
             IsFocused = CheckIfFocused();
-            TeamID = GetTeamID();
+            TeamID = GetTeamIDInternal(); // Renamed to avoid conflict if base Player has GetTeamID
             MovementContext = GetMovementContext();
             RotationAddress = ValidateRotationAddr(MovementContext + Offsets.ObservedMovementController.Rotation);
-            /// Setup Transforms
+
             this.Skeleton = new Skeleton(this, GetTransformInternalChain);
+
             bool isAI = Memory.ReadValue<bool>(this + Offsets.ObservedPlayerView.IsAI);
             IsHuman = !isAI;
-            if (isAI)
-            {
+            if (isAI) {
                 Name = "AI";
                 Type = PlayerType.AI;
-            }
-            else // Human Player
-            {
+            } else // Human Player
+              {
                 if (LocalGameWorld.MatchHasTeams)
                     ArgumentOutOfRangeException.ThrowIfEqual(TeamID, -1, nameof(TeamID));
                 Name = GetName();
-                Type = TeamID != -1 && TeamID == Memory.LocalPlayer.TeamID ?
+                Type = TeamID != -1 && Memory.LocalPlayer != null && TeamID == Memory.LocalPlayer.TeamID ?
                     PlayerType.Teammate : PlayerType.Player;
             }
         }
 
-        /// <summary>
-        /// Get Player's Account ID.
-        /// </summary>
-        /// <returns>Account ID Numeric String.</returns>
-        private string GetAccountID()
-        {
+        private string GetAccountID() {
             var idPTR = Memory.ReadPtr(this + Offsets.ObservedPlayerView.AccountId);
             return Memory.ReadUnityString(idPTR);
         }
 
         /// <summary>
-        /// Gets player's Team ID.
+        /// gets player's team id.
+        /// internal version to avoid potential naming conflicts with base class methods if any.
         /// </summary>
-        private int GetTeamID()
-        {
-            try
-            {
-                var inventoryController = Memory.ReadPtr(ObservedPlayerController + Offsets.ObservedPlayerController.InventoryController);
-                return GetTeamID(inventoryController);
-            }
-            catch { return -1; }
+        private int GetTeamIDInternal() {
+            try {
+                // uses the already resolved InventoryControllerAddr (field holding the pointer)
+                var inventoryControllerObjectPtr = Memory.ReadPtr(InventoryControllerAddr);
+                if (inventoryControllerObjectPtr == 0) return -1;
+                return GetTeamID(inventoryControllerObjectPtr); // Static method from Player.cs, expects actual controller obj addr
+            } catch { return -1; }
         }
 
-        /// <summary>
-        /// Get Player Name.
-        /// </summary>
-        /// <returns>Player Name String.</returns>
-        private string GetName()
-        {
+        private string GetName() {
             var namePtr = Memory.ReadPtr(this + Offsets.ObservedPlayerView.NickName);
             var name = Memory.ReadUnityString(namePtr)?.Trim();
             if (string.IsNullOrEmpty(name))
@@ -156,36 +114,23 @@ namespace arena_dma_radar.Arena.ArenaPlayer
             return name;
         }
 
-        /// <summary>
-        /// Get Movement Context Instance.
-        /// </summary>
-        private ulong GetMovementContext()
-        {
+        private ulong GetMovementContext() {
             return Memory.ReadPtrChain(ObservedPlayerController, Offsets.ObservedPlayerController.MovementController);
         }
 
-        /// <summary>
-        /// Refresh Player Information.
-        /// </summary>
-        public override void OnRegRefresh(ScatterReadIndex index, IReadOnlySet<ulong> registered, bool? isActiveParam = null)
-        {
+        public override void OnRegRefresh(ScatterReadIndex index, IReadOnlySet<ulong> registered, bool? isActiveParam = null) {
             if (isActiveParam is not bool isActive)
                 isActive = registered.Contains(this);
-            if (isActive)
-            {
+
+            if (isActive) {
                 UpdateHealthStatus();
+                // Gear refresh will be handled by LocalGameWorld's periodic update
             }
             base.OnRegRefresh(index, registered, isActive);
         }
 
-        /// <summary>
-        /// Get Player's Updated Health Condition
-        /// Only works in Online Mode.
-        /// </summary>
-        public void UpdateHealthStatus()
-        {
-            try
-            {
+        public void UpdateHealthStatus() {
+            try {
                 var tag = (Enums.ETagStatus)Memory.ReadValue<int>(ObservedHealthController + Offsets.ObservedHealthController.HealthStatus);
                 if ((tag & Enums.ETagStatus.Dying) == Enums.ETagStatus.Dying)
                     HealthStatus = Enums.ETagStatus.Dying;
@@ -195,49 +140,33 @@ namespace arena_dma_radar.Arena.ArenaPlayer
                     HealthStatus = Enums.ETagStatus.Injured;
                 else
                     HealthStatus = Enums.ETagStatus.Healthy;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 LoneLogging.WriteLine($"ERROR updating Health Status for '{Name}': {ex}");
             }
         }
 
-        /// <summary>
-        /// Get the Transform Internal Chain for this Player.
-        /// </summary>
-        /// <param name="bone">Bone to lookup.</param>
-        /// <returns>Array of offsets for transform internal chain.</returns>
         public override uint[] GetTransformInternalChain(Bones bone) =>
             Offsets.ObservedPlayerView.GetTransformChain(bone);
 
         /// <summary>
-        /// Get Player's Gear/Equipment.
+        /// refreshes player's gear/equipment.
         /// </summary>
-        public void GetGear()
-        {
-            try
-            {
-                Gear ??= new(this);
-            }
-            catch (Exception ex)
-            {
+        public void RefreshGear() {
+            try {
+                // gear is initialized in constructor. if it was null due to an error, this won't run.
+                Gear?.Refresh();
+            } catch (Exception ex) {
                 LoneLogging.WriteLine($"[GearManager] ERROR for Player {Name}: {ex}");
             }
         }
-        /// <summary>
-        /// Refresh item in player's hands.
-        /// </summary>
-        public void RefreshHands()
-        {
-            try
-            {
-                if (IsActive && IsAlive)
-                {
+
+        public void RefreshHands() {
+            try {
+                if (IsActive && IsAlive) {
                     Hands ??= new HandsManager(this);
                     Hands?.Refresh();
                 }
-            }
-            catch { }
+            } catch { }
         }
     }
 }
