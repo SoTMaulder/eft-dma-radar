@@ -35,7 +35,8 @@ namespace eft_dma_shared.Common.Misc.Data
             ["Arena_Bay5"] = "Bay 5",
             ["Arena_AutoService"] = "Chop Shop",
             ["Arena_Yard"] = "Yard",
-            ["Arena_Prison"] = "Fort"
+            ["Arena_Prison"] = "Fort",
+            ["Arena_Iceberg"] = "Iceberg"
         }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
