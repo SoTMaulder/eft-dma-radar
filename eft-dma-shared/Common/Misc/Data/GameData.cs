@@ -1,18 +1,17 @@
 ﻿using System.Collections.Frozen;
 using System.Numerics;
 
-namespace eft_dma_shared.Common.Misc.Data
-{
+namespace eft_dma_shared.Common.Misc.Data {
+
     /// <summary>
     /// Contains Static Game Data.
     /// </summary>
-    public static class GameData
-    {
+    public static class GameData {
+
         /// <summary>
         /// All Map Names by their Map ID.
         /// </summary>
-        public static FrozenDictionary<string, string> MapNames { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
+        public static FrozenDictionary<string, string> MapNames { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
             ["default"] = "default",
             ["woods"] = "Woods",
             ["shoreline"] = "Shoreline",
@@ -35,7 +34,8 @@ namespace eft_dma_shared.Common.Misc.Data
             ["Arena_Bay5"] = "Bay 5",
             ["Arena_AutoService"] = "Chop Shop",
             ["Arena_Yard"] = "Yard",
-            ["Arena_Prison"] = "Fort"
+            ["Arena_Prison"] = "Fort",
+            ["Arena_Iceberg"] = "Iceberg"
         }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -123,7 +123,6 @@ namespace eft_dma_shared.Common.Misc.Data
                 ["lab_Parking_Gate"] = "Parking Gate",
                 ["lab_Hangar_Gate"] = "Hangar Gate"
                 // No Scav Exfils
-
             }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase) },
             { "interchange", new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -261,8 +260,7 @@ namespace eft_dma_shared.Common.Misc.Data
             }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase) },
         }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
 
-        public static FrozenDictionary<string, Memory<Vector3>> Mines { get; } = new Dictionary<string, Memory<Vector3>>(StringComparer.OrdinalIgnoreCase)
-        {
+        public static FrozenDictionary<string, Memory<Vector3>> Mines { get; } = new Dictionary<string, Memory<Vector3>>(StringComparer.OrdinalIgnoreCase) {
             ["shoreline"] = new Vector3[]
             {
                 new Vector3(499.9635f, -39.92999f, -72.69531f),
