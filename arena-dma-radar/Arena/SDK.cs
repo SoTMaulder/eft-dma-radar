@@ -361,7 +361,7 @@ namespace SDK
 
         public readonly partial struct OpticCameraManager
         {
-            public const uint Camera = 0x68; // <UnknownNamespace>.<UnknownName>
+            public const uint Camera = 0x68; // UnityEngine.Camera
             public const uint CurrentOpticSight = 0x70; // EFT.CameraControl.OpticSight
         }
 
