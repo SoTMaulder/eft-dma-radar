@@ -19,6 +19,16 @@ namespace SDK // Custom Namespace for ease of coding
             }
         }
 
+        public readonly struct BodyAnimator // \uE670 : IAnimator, IAnimatorNotificator
+        {
+            public const uint UnityAnimator = 0x10; // Type: UnityEngine.Animator
+        }
+
+        public readonly partial struct ObservedPlayerController
+        {
+            public const uint Player = 0x10; // EFT.Player
+        }
+
         public readonly partial struct ObservedPlayerView
         {
             /// <summary>
@@ -33,25 +43,17 @@ namespace SDK // Custom Namespace for ease of coding
             }
         }
 
-        public readonly partial struct MovementContext
-        {
-            public const uint Player = 0x10; // EFT.Player
-        }
-
-        public readonly partial struct ObservedPlayerController
-        {
-            public const uint Player = 0x10; // EFT.Player
-        }
-
-        public readonly partial struct ObservedHealthController
-        {
-            public const uint Player = 0x10; // EFT.Player
-        }
-
         public readonly partial struct FirearmController // -.Player.AbstractHandsController : EmptyHandsController
         {
             public static readonly uint[] To_FirePortTransformInternal = new uint[] { Fireport, 0x10, 0x10 };
             public static readonly uint[] To_FirePortVertices = To_FirePortTransformInternal.Concat(new uint[] { UnityOffsets.TransformInternal.TransformAccess, UnityOffsets.TransformAccess.Vertices }).ToArray();
+        }
+
+        public readonly partial struct WorldInteractiveObject
+        {
+            public const uint KeyId = 0x58; // String
+            public const uint Id = 0x60; // String
+            public const uint Template = 0x138; // String
         }
     }
 
@@ -138,6 +140,15 @@ namespace SDK // Custom Namespace for ease of coding
             Knight = 32768,
             [Description(nameof(BigPipe))]
             BigPipe = 65536,
+        }
+
+        public enum InventoryBlurDimensions
+        {
+            _128 = 128,
+            _256 = 256,
+            _512 = 512,
+            _1024 = 1024,
+            _2048 = 2048,
         }
     }
 }

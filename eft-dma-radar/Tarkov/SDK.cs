@@ -2,86 +2,138 @@ namespace SDK
 {
     public readonly partial struct ClassNames
     {
-        public readonly partial struct StreamerMode
-        {
-            public const uint ClassName_ClassToken = 0x2001E4F; // MDToken
-            public const string ClassName = @"\uEA16";
-            public const string MethodName = @"IsLocalStreamer";
-        }
-
-        public readonly partial struct DogtagComponent
-        {
-            public const uint MethodName_MethodToken = 0x600F70B; // MDToken
-            public const string MethodName = @"\uE000";
-        }
-
-        public readonly partial struct GridItemView
-        {
-            public const uint MethodName_MethodToken = 0x601448F; // MDToken
-            public const string MethodName = @"\uE013";
-        }
-
         public readonly partial struct FixWildSpawnType
         {
-            public const uint ClassName_ClassToken = 0x20025EB; // MDToken
-            public const string ClassName = @"\uED0C";
+            public const uint ClassName_ClassToken = 0x20026EF; // MDToken
+            public const string ClassName = @"\uED59";
             public const string MethodName = @"SetUpSpawnInfo";
+        }
+
+        public readonly partial struct StreamerMode
+        {
+            public const uint ClassName_ClassToken = 0x2001FA6; // MDToken
+            public const string ClassName = @"\uEA95";
+            public const string MethodName = @"IsLocalStreamer";
         }
 
         public readonly partial struct NetworkContainer
         {
-            public const uint ClassName_ClassToken = 0x200065C; // MDToken
-            public const string ClassName = @"\uE325";
+            public const uint ClassName_ClassToken = 0x2000661; // MDToken
+            public const string ClassName = @"\uE32D";
+        }
+
+        public readonly partial struct InertiaSettings
+        {
+            public const uint ClassName_ClassToken = 0x200169E; // MDToken
+            public const string ClassName = @"\uE7EA";
+        }
+
+        public readonly partial struct GameSettings
+        {
+            public const uint ClassName_ClassToken = 0x2001F60; // MDToken
+            public const string ClassName = @"\uEA82";
         }
 
         public readonly partial struct AmmoTemplate
         {
-            public const uint ClassName_ClassToken = 0x20029B5; // MDToken
-            public const uint MethodName_MethodToken = 0x600FDC6; // MDToken
-            public const string ClassName = @"\uEECB";
+            public const uint ClassName_ClassToken = 0x2002ABC; // MDToken
+            public const uint MethodName_MethodToken = 0x60105A2; // MDToken
+            public const string ClassName = @"\uEF1A";
             public const string MethodName = @"get_LoadUnloadModifier";
         }
 
         public readonly partial struct NoMalfunctions
         {
-            public const uint ClassName_ClassToken = 0x2001772; // MDToken
-            public const uint GetMalfunctionState_MethodToken = 0x60094DF; // MDToken
+            public const uint ClassName_ClassToken = 0x20018A0; // MDToken
+            public const uint GetMalfunctionState_MethodToken = 0x6009D18; // MDToken
             public const string ClassName = @"EFT.Player+FirearmController";
             public const string GetMalfunctionState = @"GetMalfunctionState";
         }
 
         public readonly partial struct GymHack
         {
-            public const uint ClassName_ClassToken = 0x20020D1; // MDToken
-            public const uint MethodName_MethodToken = 0x600CE62; // MDToken
+            public const uint ClassName_ClassToken = 0x200223B; // MDToken
+            public const uint MethodName_MethodToken = 0x600D833; // MDToken
             public const string ClassName = @"EFT.Hideout.ShrinkingCircleQTE";
             public const string MethodName = @"\uE001";
         }
 
         public readonly partial struct OpticCameraManagerContainer
         {
-            public const uint ClassName_ClassToken = 0x2002DDB; // MDToken
-            public const string ClassName = @"\uF08A";
+            public const uint ClassName_ClassToken = 0x2002F5F; // MDToken
+            public const string ClassName = @"\uF124";
         }
 
         public readonly partial struct ScreenManager
         {
-            public const uint ClassName_ClassToken = 0x20034F1; // MDToken
-            public const string ClassName = @"\uF153";
+            public const uint ClassName_ClassToken = 0x200369A; // MDToken
+            public const string ClassName = @"\uF1EF";
         }
 
         public readonly partial struct FirearmController
         {
-            public const uint ClassName_ClassToken = 0x2001772; // MDToken
+            public const uint ClassName_ClassToken = 0x20018A0; // MDToken
             public const string ClassName = @"EFT.Player+FirearmController";
+        }
+
+        public readonly partial struct DogtagComponent
+        {
+            public const uint MethodName_MethodToken = 0x600FEE0; // MDToken
+            public const string MethodName = @"\uE000";
+        }
+
+        public readonly partial struct GridItemView
+        {
+            public const uint MethodName_MethodToken = 0x6015003; // MDToken
+            public const string MethodName = @"\uE013";
         }
 
         public readonly partial struct ProceduralWeaponAnimation
         {
-            public const uint ClassName_ClassToken = 0x20024AD; // MDToken
-            public const uint MethodName_MethodToken = 0x600E320; // MDToken
+            public const uint ClassName_ClassToken = 0x20025B0; // MDToken
+            public const uint MethodName_MethodToken = 0x600EAE8; // MDToken
             public const string ClassName = @"EFT.Animations.ProceduralWeaponAnimation";
             public const string MethodName = @"get_ShotNeedsFovAdjustments";
+        }
+
+        public readonly partial struct MovementContext
+        {
+            public const uint ClassName_ClassToken = 0x2001AA7; // MDToken
+            public const uint MethodName_MethodToken = 0x600AC4A; // MDToken
+            public const string ClassName = @"EFT.MovementContext";
+            public const string MethodName = @"SetPhysicalCondition";
+        }
+
+        public readonly partial struct GrenadeFlashScreenEffect
+        {
+            public const uint ClassName_ClassToken = 0x2000C21; // MDToken
+            public const uint MethodName_MethodToken = 0x60051C0; // MDToken
+            public const string ClassName = @"GrenadeFlashScreenEffect";
+            public const string MethodName = @"Update";
+        }
+
+        public readonly partial struct FovChanger
+        {
+            public const uint ClassName_ClassToken = 0x2002F5F; // MDToken
+            public const uint MethodName_MethodToken = 0x6011F0A; // MDToken
+            public const string ClassName = @"\uF124";
+            public const string MethodName = @"SetFov";
+        }
+
+        public readonly partial struct VitalParts
+        {
+            public const uint ClassName_ClassToken = 0x2002A61; // MDToken
+            public const uint MethodName_MethodToken = 0x601036A; // MDToken
+            public const string ClassName = @"EFT.InventoryLogic.CompoundItem";
+            public const string MethodName = @"\uE007";
+        }
+
+        public readonly partial struct InventoryLogic_Mod
+        {
+            public const uint ClassName_ClassToken = 0x2002AD8; // MDToken
+            public const uint MethodName_MethodToken = 0x601063B; // MDToken
+            public const string ClassName = @"EFT.InventoryLogic.Mod";
+            public const string MethodName = @"get_RaidModdable";
         }
     }
 
@@ -89,12 +141,12 @@ namespace SDK
     {
         public readonly partial struct TarkovApplication
         {
-            public const uint MenuOperation = 0xF0; // -.\uE993
+            public const uint MenuOperation = 0xF0; // -.\uEA0F
         }
 
         public readonly partial struct MenuOperation
         {
-            public const uint AfkMonitor = 0x38; // -.\uE98B
+            public const uint AfkMonitor = 0x38; // -.\uEA07
         }
 
         public readonly partial struct AfkMonitor
@@ -110,17 +162,19 @@ namespace SDK
 
         public readonly partial struct ClientLocalGameWorld
         {
-            public const uint TransitController = 0x20; // -.\uE7F1
-            public const uint ExfilController = 0x30; // -.\uE6F0
-            public const uint BtrController = 0x50; // -.\uF02B
-            public const uint ClientShellingController = 0x80; // -.\uE701
+            public const uint TransitController = 0x20; // -.\uE868
+            public const uint ExfilController = 0x30; // -.\uE731
+            public const uint BtrController = 0x50; // -.\uF07E
+            public const uint ClientShellingController = 0x80; // -.\uE742
             public const uint LocationId = 0x90; // String
-            public const uint LootList = 0x118; // System.Collections.Generic.List<\uE309>
+            public const uint LootList = 0x118; // System.Collections.Generic.List<\uE311>
             public const uint RegisteredPlayers = 0x140; // System.Collections.Generic.List<IPlayer>
             public const uint BorderZones = 0x198; // EFT.Interactive.BorderZone[]
             public const uint MainPlayer = 0x1A8; // EFT.Player
-            public const uint SynchronizableObjectLogicProcessor = 0x1D8; // -.\uEB8F
-            public const uint Grenades = 0x200; // -.\uE3D0<Int32, Throwable>
+            public const uint SynchronizableObjectLogicProcessor = 0x1D8; // -.\uEBD9
+            public const uint Grenades = 0x200; // -.\uE3D7<Int32, Throwable>
+            public const uint World = 0x258; // EFT.World
+            public const uint LoadBundlesAndCreatePools = 0x280; // Boolean
         }
 
         public readonly partial struct TransitController
@@ -133,6 +187,18 @@ namespace SDK
             public const uint ActiveClientProjectiles = 0x68; // System.Collections.Generic.Dictionary<Int32, ArtilleryProjectileClient>
         }
 
+        public readonly partial struct WorldController
+        {
+            public const uint Interactables = 0x30; // EFT.Interactive.WorldInteractiveObject[]
+        }
+
+        public readonly partial struct Interactable
+        {
+            public const uint KeyId = 0x58; // String
+            public const uint Id = 0x60; // String
+            public const uint _doorState = 0x11C; // System.Byte
+        }
+
         public readonly partial struct ArtilleryProjectileClient
         {
             public const uint Position = 0x34; // UnityEngine.Vector3
@@ -141,7 +207,7 @@ namespace SDK
 
         public readonly partial struct TransitPoint
         {
-            public const uint parameters = 0x20; // -.\uE6BF.Location.TransitParameters
+            public const uint parameters = 0x20; // -.\uE6CC.Location.TransitParameters
         }
 
         public readonly partial struct TransitParameters
@@ -213,10 +279,71 @@ namespace SDK
         public readonly partial struct EFTHardSettings
         {
             public const uint DecelerationSpeed = 0x1A0; // Single
+            public const uint AIR_CONTROL_SAME_DIR = 0x20C; // Single
+            public const uint AIR_CONTROL_NONE_OR_ORT_DIR = 0x214; // Single
             public const uint LOOT_RAYCAST_DISTANCE = 0x230; // Single
             public const uint DOOR_RAYCAST_DISTANCE = 0x234; // Single
             public const uint STOP_AIMING_AT = 0x284; // Single
+            public const uint WEAPON_OCCLUSION_LAYERS = 0x2A8; // UnityEngine.LayerMask
             public const uint MOUSE_LOOK_HORIZONTAL_LIMIT = 0x37C; // UnityEngine.Vector2
+            public const uint MOUSE_LOOK_VERTICAL_LIMIT = 0x384; // UnityEngine.Vector2
+            public const uint POSE_CHANGING_SPEED = 0x3B0; // Single
+            public const uint MED_EFFECT_USING_PANEL = 0x3CC; // Boolean
+        }
+
+        public readonly partial struct GlobalConfigs
+        {
+            public const uint Inertia = 0xE0; // -.\uE7EA.InertiaSettings
+        }
+
+        public readonly partial struct InertiaSettings
+        {
+            public const uint FallThreshold = 0x20; // Single
+            public const uint BaseJumpPenaltyDuration = 0x4C; // Single
+            public const uint BaseJumpPenalty = 0x54; // Single
+            public const uint MoveTimeRange = 0xF4; // UnityEngine.Vector2
+        }
+
+        public readonly partial struct InventoryBlur
+        {
+            public const uint _upsampleTexDimension = 0x34; // System.Int32
+            public const uint _blurCount = 0x3C; // Int32
+            public const uint enabled = 0x44; // Boolean
+        }
+
+        public readonly partial struct QuestConditionZone
+        {
+            public const uint target = 0x70; // System.String[]
+            public const uint zoneId = 0x78; // String
+        }
+
+        public readonly partial struct QuestConditionLaunchFlare
+        {
+            public const uint zoneId = 0x70; // String
+        }
+
+        public readonly partial struct QuestConditionInZone
+        {
+            public const uint zoneIds = 0x70; // System.String[]
+        }
+
+        public readonly partial struct NightVision
+        {
+            public const uint _on = 0xF4; // Boolean
+        }
+
+        public readonly partial struct ThermalVision
+        {
+            public const uint Material = 0x98; // UnityEngine.Material
+            public const uint On = 0xE8; // Boolean
+            public const uint IsNoisy = 0xE9; // Boolean
+            public const uint IsFpsStuck = 0xEA; // Boolean
+            public const uint IsMotionBlurred = 0xEB; // Boolean
+            public const uint IsGlitch = 0xEC; // Boolean
+            public const uint IsPixelated = 0xED; // Boolean
+            public const uint ChromaticAberrationThermalShift = 0xF0; // Single
+            public const uint UnsharpRadiusBlur = 0xF4; // Single
+            public const uint UnsharpBias = 0xF8; // Single
         }
 
         public readonly partial struct ExfilController
@@ -240,17 +367,7 @@ namespace SDK
 
         public readonly partial struct ExfilSettings
         {
-            public const uint Id = 0x10; // String
             public const uint Name = 0x18; // String
-            public const uint EntryPoints = 0x20; // String
-            public const uint ExfiltrationType = 0x28; // System.Int32
-            public const uint ExfiltrationTime = 0x2C; // Single
-            public const uint PlayersCount = 0x30; // Int32
-            public const uint Chance = 0x34; // Single
-            public const uint MinTime = 0x38; // Single
-            public const uint MaxTime = 0x3C; // Single
-            public const uint StartTime = 0x40; // Int32
-            public const uint EventAvailable = 0x44; // Boolean
         }
 
         public readonly partial struct GenericCollectionContainer
@@ -261,7 +378,7 @@ namespace SDK
         public readonly partial struct Grenade
         {
             public const uint IsDestroyed = 0x5D; // Boolean
-            public const uint WeaponSource = 0x80; // -.\uEF32
+            public const uint WeaponSource = 0x80; // -.\uEF81
         }
 
         public readonly partial struct Player
@@ -272,23 +389,23 @@ namespace SDK
             public const uint ProceduralWeaponAnimation = 0x1E0; // EFT.Animations.ProceduralWeaponAnimation
             public const uint _animators = 0x3A8; // -.IAnimator[]
             public const uint Corpse = 0x3E0; // EFT.Interactive.Corpse
-            public const uint Location = 0x5D8; // String
-            public const uint InteractableObject = 0x5E8; // EFT.Interactive.InteractableObject
-            public const uint Profile = 0x610; // EFT.Profile
-            public const uint Physical = 0x620; // -.\uE391
-            public const uint AIData = 0x630; // -.IAIData
-            public const uint _healthController = 0x650; // EFT.HealthSystem.IHealthController
-            public const uint _inventoryController = 0x668; // -.Player.PlayerInventoryController
-            public const uint _handsController = 0x670; // -.Player.AbstractHandsController
-            public const uint EnabledAnimators = 0x98C; // System.Int32
-            public const uint InteractionRayOriginOnStartOperation = 0x9FC; // UnityEngine.Vector3
-            public const uint InteractionRayDirectionOnStartOperation = 0xA08; // UnityEngine.Vector3
-            public const uint IsYourPlayer = 0xA1E; // Boolean
+            public const uint Location = 0x5E0; // String
+            public const uint InteractableObject = 0x5F0; // EFT.Interactive.InteractableObject
+            public const uint Profile = 0x618; // EFT.Profile
+            public const uint Physical = 0x630; // -.\uE399
+            public const uint AIData = 0x640; // -.IAIData
+            public const uint _healthController = 0x660; // EFT.HealthSystem.IHealthController
+            public const uint _inventoryController = 0x678; // -.Player.PlayerInventoryController
+            public const uint _handsController = 0x680; // -.Player.AbstractHandsController
+            public const uint EnabledAnimators = 0x9A4; // System.Int32
+            public const uint InteractionRayOriginOnStartOperation = 0xA14; // UnityEngine.Vector3
+            public const uint InteractionRayDirectionOnStartOperation = 0xA20; // UnityEngine.Vector3
+            public const uint IsYourPlayer = 0xA36; // Boolean
         }
 
         public readonly partial struct AIData
         {
-            public const uint IsAI = 0xF0; // Boolean
+            public const uint IsAI = 0xF8; // Boolean
         }
 
         public readonly partial struct ObservedPlayerView
@@ -297,7 +414,7 @@ namespace SDK
             public const uint NickName = 0x50; // String
             public const uint AccountId = 0x58; // String
             public const uint PlayerBody = 0x68; // EFT.PlayerBody
-            public const uint ObservedPlayerController = 0x88; // -.\uECF9
+            public const uint ObservedPlayerController = 0x88; // -.\uED46
             public const uint Voice = 0x98; // String
             public const uint Side = 0x100; // System.Int32
             public const uint IsAI = 0x111; // Boolean
@@ -307,22 +424,33 @@ namespace SDK
         public readonly partial struct ObservedPlayerController
         {
             public const uint Player = 0x10; // EFT.NextObservedPlayer.ObservedPlayerView
-            public static readonly uint[] MovementController = new uint[] { 0xC8, 0x10 }; // -.\uED19, -.\uED1B
-            public const uint HandsController = 0xD8; // -.\uED03
-            public const uint InfoContainer = 0xE8; // -.\uED0C
-            public const uint HealthController = 0xF0; // -.\uE43F
-            public const uint InventoryController = 0x118; // -.\uED0E
+            public static readonly uint[] MovementController = new uint[] { 0xC8, 0x10 }; // -.\uED66, -.\uED68
+            public const uint HandsController = 0xD8; // -.\uED50
+            public const uint InfoContainer = 0xE8; // -.\uED59
+            public const uint HealthController = 0xF0; // -.\uE446
+            public const uint InventoryController = 0x118; // -.\uED5B
         }
 
         public readonly partial struct ObservedMovementController
         {
-            public const uint Rotation = 0x88; // UnityEngine.Vector2
-            public const uint Velocity = 0x10C; // UnityEngine.Vector3
+            public const uint Rotation = 0x90; // UnityEngine.Vector2
+            public const uint Velocity = 0x114; // UnityEngine.Vector3
         }
 
         public readonly partial struct ObservedHandsController
         {
             public const uint ItemInHands = 0x58; // EFT.InventoryLogic.Item
+            public const uint BundleAnimationBones = 0xA0; // -.\uED42
+        }
+
+        public readonly partial struct BundleAnimationBonesController
+        {
+            public const uint ProceduralWeaponAnimationObs = 0xB8; // EFT.Animations.ProceduralWeaponAnimation
+        }
+
+        public readonly partial struct ProceduralWeaponAnimationObs
+        {
+            public const uint _isAimingObs = 0x1C5; // Boolean
         }
 
         public readonly partial struct ObservedHealthController
@@ -353,9 +481,9 @@ namespace SDK
 
         public readonly partial struct Physical
         {
-            public const uint Stamina = 0x38; // -.\uE390
-            public const uint HandsStamina = 0x40; // -.\uE390
-            public const uint Oxygen = 0x48; // -.\uE390
+            public const uint Stamina = 0x38; // -.\uE398
+            public const uint HandsStamina = 0x40; // -.\uE398
+            public const uint Oxygen = 0x48; // -.\uE398
             public const uint Overweight = 0x8C; // Single
             public const uint WalkOverweight = 0x90; // Single
             public const uint WalkSpeedLimit = 0x94; // Single
@@ -393,6 +521,11 @@ namespace SDK
             public const uint ShotNeedsFovAdjustments = 0x40F; // Boolean
         }
 
+        public readonly partial struct HandsContainer
+        {
+            public const uint CameraOffset = 0xE4; // UnityEngine.Vector3
+        }
+
         public readonly partial struct SightNBone
         {
             public const uint Mod = 0x10; // EFT.InventoryLogic.SightComponent
@@ -400,8 +533,8 @@ namespace SDK
 
         public readonly partial struct MotionEffector
         {
-            public const uint _mouseProcessors = 0x18; // -.\uE433[]
-            public const uint _movementProcessors = 0x20; // -.\uE432[]
+            public const uint _mouseProcessors = 0x18; // -.\uE43A[]
+            public const uint _movementProcessors = 0x20; // -.\uE439[]
         }
 
         public readonly partial struct BreathEffector
@@ -428,12 +561,12 @@ namespace SDK
         {
             public const uint Id = 0x10; // String
             public const uint AccountId = 0x18; // String
-            public const uint Info = 0x40; // -.\uE932
+            public const uint Info = 0x40; // -.\uE9AD
             public const uint Skills = 0x70; // EFT.SkillManager
-            public const uint TaskConditionCounters = 0x80; // System.Collections.Generic.Dictionary<MongoID, \uF1CC>
-            public const uint QuestsData = 0x88; // System.Collections.Generic.List<\uF1E8>
-            public const uint WishlistManager = 0xC8; // -.\uE860
-            public const uint Stats = 0xF8; // -.\uE3A7
+            public const uint TaskConditionCounters = 0x80; // System.Collections.Generic.Dictionary<MongoID, \uF26A>
+            public const uint QuestsData = 0x88; // System.Collections.Generic.List<\uF286>
+            public const uint WishlistManager = 0xD0; // -.\uE8D9
+            public const uint Stats = 0x108; // -.\uE3AE
         }
 
         public readonly partial struct WishlistManager
@@ -446,7 +579,7 @@ namespace SDK
             public const uint Nickname = 0x10; // String
             public const uint EntryPoint = 0x18; // String
             public const uint GroupId = 0x28; // String
-            public const uint Settings = 0x48; // -.\uE90E
+            public const uint Settings = 0x48; // -.\uE989
             public const uint Side = 0x88; // [HUMAN] Int32
             public const uint RegistrationDate = 0x8C; // Int32
             public const uint MemberCategory = 0x98; // System.Int32
@@ -475,14 +608,14 @@ namespace SDK
         {
             public const uint Id = 0x10; // String
             public const uint CompletedConditions = 0x20; // System.Collections.Generic.HashSet<MongoID>
-            public const uint Template = 0x28; // -.\uF1E9
+            public const uint Template = 0x28; // -.\uF287
             public const uint Status = 0x34; // System.Int32
         }
 
         public readonly partial struct QuestTemplate
         {
             public const uint Conditions = 0x40; // EFT.Quests.ConditionsDict
-            public const uint Name = 0x50; // String
+            public const uint Name = 0x70; // String
         }
 
         public readonly partial struct QuestConditionsContainer
@@ -507,7 +640,7 @@ namespace SDK
 
         public readonly partial struct QuestConditionCounterCreator
         {
-            public const uint Conditions = 0x78; // -.\uF1C9
+            public const uint Conditions = 0x78; // -.\uF267
         }
 
         public readonly partial struct QuestConditionVisitPlace
@@ -523,7 +656,7 @@ namespace SDK
 
         public readonly partial struct QuestConditionCounterTemplate
         {
-            public const uint Conditions = 0x10; // -.\uF1C9
+            public const uint Conditions = 0x10; // -.\uF267
         }
 
         public readonly partial struct ItemHandsController
@@ -546,6 +679,7 @@ namespace SDK
         public readonly partial struct MovementContext
         {
             public const uint Player = 0x10; // EFT.Player
+            public const uint PlantState = 0x68; // EFT.BaseMovementState
             public const uint CurrentState = 0xE0; // EFT.BaseMovementState
             public const uint _states = 0x1E0; // System.Collections.Generic.Dictionary<Byte, BaseMovementState>
             public const uint _movementStates = 0x200; // -.IPlayerStateContainerBehaviour[]
@@ -582,19 +716,19 @@ namespace SDK
         public readonly partial struct Inventory
         {
             public const uint Equipment = 0x10; // EFT.InventoryLogic.InventoryEquipment
-            public const uint QuestRaidItems = 0x20; // -.\uEFAD
-            public const uint QuestStashItems = 0x28; // -.\uEFAD
+            public const uint QuestRaidItems = 0x20; // -.\uEFFE
+            public const uint QuestStashItems = 0x28; // -.\uEFFE
         }
 
         public readonly partial struct Equipment
         {
-            public const uint Grids = 0x78; // -.\uEE27[]
+            public const uint Grids = 0x78; // -.\uEE74[]
             public const uint Slots = 0x80; // EFT.InventoryLogic.Slot[]
         }
 
         public readonly partial struct Grids
         {
-            public const uint ContainedItems = 0x30; // -.\uEE29
+            public const uint ContainedItems = 0x30; // -.\uEE76
         }
 
         public readonly partial struct GridContainedItems
@@ -627,7 +761,7 @@ namespace SDK
         public readonly partial struct LootableContainer
         {
             public const uint InteractingPlayer = 0xC0; // EFT.IPlayer
-            public const uint ItemOwner = 0x148; // -.\uEF65
+            public const uint ItemOwner = 0x148; // -.\uEFB4
             public const uint Template = 0x150; // String
         }
 
@@ -646,7 +780,7 @@ namespace SDK
 
         public readonly partial struct LootItemMod
         {
-            public const uint Grids = 0x78; // -.\uEE27[]
+            public const uint Grids = 0x78; // -.\uEE74[]
             public const uint Slots = 0x80; // EFT.InventoryLogic.Slot[]
         }
 
@@ -665,7 +799,7 @@ namespace SDK
         public readonly partial struct LootItemMagazine
         {
             public const uint Cartridges = 0xA0; // EFT.InventoryLogic.StackSlot
-            public const uint LoadUnloadModifier = 0x19C; // Single
+            public const uint LoadUnloadModifier = 0x1A4; // Single
         }
 
         public readonly partial struct MagazineClass
@@ -687,30 +821,52 @@ namespace SDK
             public const uint QuestItem = 0xBC; // Boolean
         }
 
+        public readonly partial struct MedicalTemplate
+        {
+            public const uint BodyPartTimeMults = 0x138; // System.Collections.Generic.KeyValuePair`2[]
+            public const uint HealthEffects = 0x140; // System.Collections.Generic.Dictionary<Int32, \uE6DC>
+            public const uint DamageEffects = 0x148; // System.Collections.Generic.Dictionary<Int32, \uE6DB>
+            public const uint StimulatorBuffs = 0x150; // String
+            public const uint UseTime = 0x160; // Single
+            public const uint MaxHpResource = 0x164; // Int32
+            public const uint HpResourceRate = 0x168; // Single
+        }
+
         public readonly partial struct ModTemplate
         {
-            public const uint Velocity = 0x168; // Single
+            public const uint Velocity = 0x170; // Single
         }
 
         public readonly partial struct AmmoTemplate
         {
-            public const uint InitialSpeed = 0x1BC; // Single
-            public const uint BallisticCoeficient = 0x1D0; // Single
-            public const uint BulletMassGram = 0x258; // Single
-            public const uint BulletDiameterMilimeters = 0x25C; // Single
+            public const uint InitialSpeed = 0x1C4; // Single
+            public const uint BallisticCoeficient = 0x1D8; // Single
+            public const uint BulletMassGram = 0x260; // Single
+            public const uint BulletDiameterMilimeters = 0x264; // Single
         }
 
         public readonly partial struct WeaponTemplate
         {
-            public const uint Velocity = 0x258; // Single
+            public const uint Velocity = 0x260; // Single
         }
 
         public readonly partial struct PlayerBody
         {
             public const uint SkeletonRootJoint = 0x30; // Diz.Skinning.Skeleton
             public const uint BodySkins = 0x48; // System.Collections.Generic.Dictionary<Int32, LoddedSkin>
-            public const uint _bodyRenderers = 0x58; // -.\uE43E[]
-            public const uint SlotViews = 0x70; // -.\uE3D0<Int32, \uE001>
+            public const uint _bodyRenderers = 0x58; // -.\uE445[]
+            public const uint SlotViews = 0x70; // -.\uE3D7<Int32, \uE001>
+            public const uint PointOfView = 0x98; // -.\uE772<Int32>
+        }
+
+        public readonly partial struct PointOfView
+        {
+            public const uint POV = 0x10; // Var
+        }
+
+        public readonly partial struct PlayerSpring
+        {
+            public const uint CameraTransform = 0x70; // UnityEngine.Transform
         }
 
         public readonly partial struct PlayerBodySubclass
@@ -765,7 +921,7 @@ namespace SDK
 
         public readonly partial struct TOD_Scattering
         {
-            public const uint sky = 0x20; // -.TOD_Sky
+            public const uint sky = 0x28; // -.TOD_Sky
         }
 
         public readonly partial struct TOD_Sky
@@ -789,6 +945,51 @@ namespace SDK
             public const uint LockCurrentTime = 0x70; // Boolean
         }
 
+        public readonly partial struct PrismEffects
+        {
+            public const uint useVignette = 0x12C; // Boolean
+            public const uint useExposure = 0x1C0; // Boolean
+        }
+
+        public readonly partial struct CC_Vintage
+        {
+            public const uint amount = 0x40; // Single
+        }
+
+        public readonly partial struct GPUInstancerManager
+        {
+            public const uint runtimeDataList = 0x48; // System.Collections.Generic.List<\uE61D>
+        }
+
+        public readonly partial struct RuntimeDataList
+        {
+            public const uint instanceBounds = 0x68; // UnityEngine.Bounds
+        }
+
+        public readonly partial struct GameSettingsContainer
+        {
+            public const uint Game = 0x10; // -.\uEA82.\uE000<\uEA96, \uEA95>
+            public const uint Graphics = 0x28; // -.\uEA82.\uE000<\uEA91, \uEA90>
+        }
+
+        public readonly partial struct GameSettingsInnerContainer
+        {
+            public const uint Settings = 0x10; // Var
+            public const uint Controller = 0x30; // Var
+        }
+
+        public readonly partial struct GameSettings
+        {
+            public const uint FieldOfView = 0x60; // Bsg.GameSettings.GameSetting<Int32>
+            public const uint HeadBobbing = 0x68; // Bsg.GameSettings.GameSetting<Single>
+            public const uint AutoEmptyWorkingSet = 0x70; // Bsg.GameSettings.GameSetting<Boolean>
+        }
+
+        public readonly partial struct GraphicsSettings
+        {
+            public const uint DisplaySettings = 0x20; // Bsg.GameSettings.GameSetting<\uEA8B>
+        }
+
         public readonly partial struct NetworkContainer
         {
             public const uint NextRequestIndex = 0x8; // Int64
@@ -798,8 +999,8 @@ namespace SDK
 
         public readonly partial struct ScreenManager
         {
-            public const uint Instance = 0x0; // -.\uF153
-            public const uint CurrentScreenController = 0x28; // -.\uF155<Var>
+            public const uint Instance = 0x0; // -.\uF1EF
+            public const uint CurrentScreenController = 0x28; // -.\uF1F1<Var>
         }
 
         public readonly partial struct CurrentScreenController
@@ -807,10 +1008,30 @@ namespace SDK
             public const uint Generic = 0x20; // Var
         }
 
+        public readonly partial struct BSGGameSetting
+        {
+            public const uint ValueClass = 0x28; // [HUMAN] ulong
+        }
+
+        public readonly partial struct BSGGameSettingValueClass
+        {
+            public const uint Value = 0x30; // [HUMAN] T
+        }
+
+        public readonly partial struct SSAA
+        {
+            public const uint OpticMaskMaterial = 0x58; // [HUMAN] UnityEngine.Material
+        }
+
+        public readonly partial struct BloomAndFlares
+        {
+            public const uint BloomIntensity = 0xB8; // [HUMAN] Single
+        }
+
         public readonly partial struct OpticCameraManagerContainer
         {
-            public const uint Instance = 0x0; // -.\uF08A
-            public const uint OpticCameraManager = 0x10; // -.\uF08B
+            public const uint Instance = 0x0; // -.\uF124
+            public const uint OpticCameraManager = 0x10; // -.\uF125
             public const uint FPSCamera = 0x60; // UnityEngine.Camera
         }
 
@@ -827,7 +1048,7 @@ namespace SDK
 
         public readonly partial struct SightComponent
         {
-            public const uint _template = 0x20; // -.\uEE1F
+            public const uint _template = 0x20; // -.\uEE6C
             public const uint ScopesSelectedModes = 0x30; // System.Int32[]
             public const uint SelectedScope = 0x38; // Int32
             public const uint ScopeZoomValue = 0x3C; // Single
@@ -835,7 +1056,7 @@ namespace SDK
 
         public readonly partial struct SightInterface
         {
-            public const uint Zooms = 0x190; // System.Single[]
+            public const uint Zooms = 0x198; // System.Single[]
         }
     }
 
