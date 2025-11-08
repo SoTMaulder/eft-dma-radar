@@ -19,15 +19,21 @@ namespace SDK // Custom Namespace for ease of coding
             }
         }
 
-        public readonly struct BodyAnimator // \uE670 : IAnimator, IAnimatorNotificator
+        public readonly partial struct MovementContext
         {
-            public const uint UnityAnimator = 0x10; // Type: UnityEngine.Animator
+            public const uint Player = 0x10; // EFT.Player
         }
 
         public readonly partial struct ObservedPlayerController
         {
             public const uint Player = 0x10; // EFT.Player
         }
+
+        public readonly partial struct ObservedHealthController
+        {
+            public const uint Player = 0x10; // EFT.Player
+        }
+
 
         public readonly partial struct ObservedPlayerView
         {
